@@ -134,6 +134,7 @@ class Constant(Node):
     def compile_theano(self):
         self.links_out[0].set_value(theano.tensor.constant(self.value))
 
+        
 class Output(Node):
 
     def __init__(self):

@@ -6,6 +6,8 @@ network = imp.load_source('network','interface/network_canvas/network_canvas.py'
 optimizer = imp.load_source('optimizer','interface/optimizer_canvas/optimizer_canvas.py')
 dataset = imp.load_source('dataset','interface/dataset_canvas/dataset_canvas.py')
 
+graphics = imp.load_source('graphics','interface/graphics/graphic.py')
+
 menu = imp.load_source('menu','interface/other/menubar.py')
 toolbox = imp.load_source('toolbox','interface/other/toolbox.py')
 
@@ -55,9 +57,22 @@ class Interface(tk.Tk):
         self.note.add(self.optimizer_canvas, text="Optimizer")
         self.note.add(self.dataset_canvas, text="Datasets")
 
-        #self.note.pack()
-
         self.toolbox = toolbox.Toolbox(self)
+
+        def tabChangedEvent(event):
+            if event.widget.index("current") == 0:
+                self.toolbox.display_list(self.network_canvas.available_components)
+            elif event.widget.index("current") == 1:
+                self.toolbox.display_list(self.optimizer_canvas.available_components)
+            elif event.widget.index("current") == 2:
+                self.toolbox.display_list(self.dataset_canvas.available_components)
+        
+        self.note.bind_all("<<NotebookTabChanged>>", tabChangedEvent)
+
+        self.network_canvas.toolbox = self.toolbox
+        self.optimizer_canvas.toolbox = self.toolbox
+        self.dataset_canvas.toolbox = self.toolbox
+
 
     def layout(self):
         self.toolbox.pack(side=tk.RIGHT, expand=True, fill=tk.Y, pady=0, padx=0, anchor="ne")
