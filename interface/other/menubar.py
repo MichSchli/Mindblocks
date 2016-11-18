@@ -20,6 +20,18 @@ class Menubar(tk.Menu):
                  ("Copy", self.placeholder),
                  ("Paste", self.placeholder)
              ]
+            ),
+            ("Run",
+             [
+                 ("Train", self.train),
+                 ("Predict", self.predict),
+                 ("Options", self.placeholder)
+             ]
+            ),
+            ("Compile",
+             [
+                 ("Options", self.placeholder)
+             ]
             )
         ]
 
@@ -37,7 +49,13 @@ class Menubar(tk.Menu):
             
     def quit_f(self):
         self.root.quit()
-            
+
+    def predict(self):
+        self.root.predict_selection()
+
+    def train(self):
+        self.root.train_selection()
+        
     def __add_menu_from_list__(self, title, l):
         menu = tk.Menu(self, tearoff=0)
         for k in l:
