@@ -4,7 +4,7 @@ class Toolbox(tk.Frame):
 
     components = []
     canvas = None
-    selection = None
+    selected_component = None
 
     def __init__(self, parent):
         tk.Frame.__init__(self, parent, width=200)
@@ -21,16 +21,18 @@ class Toolbox(tk.Frame):
         self.update_components()
 
     def set_selection(self, component):
-        self.selection = component
+        toolbox_property = component is not None
+        self.selected_component.change(component, properties={'is_toolbox': toolbox_property })
         
     def clicked(self, component):
         self.set_selection(component)
-        print(str(component)+" was clicked!")
 
     def update_components(self):
         self.set_selection(None)
         self.canvas.set_components(self.components)
 
+    def canvas_selection_changed(self, selection):
+        self.display_list(selection.get().available_components)
 
 class ToolboxCanvas(tk.Canvas):
 
@@ -100,8 +102,8 @@ class ComponentSlice():
         x_center = x + 50
         y_center = y + 50
 
-        self.component.draw(self.canvas, (x_center, y_center), fit_to_size=(x_max_size, y_max_size))
+        self.component.graphic.draw(self.canvas, (x_center, y_center), fit_to_size=(x_max_size, y_max_size))
 
     def click(self, position):
-        return self.component.contains_position(position)
+        return self.component.graphic.contains_position(position)
         

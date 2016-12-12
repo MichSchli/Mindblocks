@@ -1,8 +1,8 @@
 import imp
-graphics = imp.load_source('graphics','interface/graphics/graphic.py')
 
+components = imp.load_source('graphics','components/component.py')
 abstract = imp.load_source('abstract','interface/drawable_canvas.py')
 
 class DatasetCanvas(abstract.DrawableCanvas):
 
-    available_components = [graphics.Placeholder("d1"), graphics.Placeholder("d2"), graphics.Placeholder("d3")]
+    available_components = [components.Placeholder("d1"), components.Placeholder("d2"), components.Placeholder("d3")]

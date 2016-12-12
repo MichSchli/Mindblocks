@@ -2,16 +2,52 @@ import tkinter as tk
 
 class DrawableCanvas(tk.Canvas):
 
+    components = None
+    graphs = []
+    
     def __init__(self, parent):
         self.x = self.y = 0
         tk.Canvas.__init__(self, parent, cursor="cross", borderwidth=4, relief='sunken')
         self.bind("<ButtonPress-1>", self.on_button_press)
+        self.components = []
 
     def on_button_press(self, event):
         x = event.x
         y = event.y
 
-        current_component = self.toolbox.selection
-        if current_component is not None:
-            current_component.copy().draw(self, (x,y))
+        clicked_component = self.component_at(x,y)
+        
+        if clicked_component is None and self.selected_component.properties['is_toolbox']:
+            new_component = self.selected_component.get().copy(identifier=len(self.components))
+            self.components.append(new_component)
+            self.graphs.append(new_component.initialize_singleton_graph())
+            self.components.extend(new_component.get_links())
 
+            new_component.graphic.draw(self, (x,y))
+            for link in new_component.get_links():
+                link.graphic.draw_from_parent(self)
+                                  
+            self.selected_component.change(new_component, properties={'is_toolbox':False})
+        else:
+            if self.should_make_link(self.selected_component.get(), clicked_component):
+                self.make_link(self.selected_component.get(), clicked_component)
+            elif self.should_make_link(clicked_component, self.selected_component.get()):
+                self.make_link(clicked_component, self.selected_component.get())
+            else:    
+                self.selected_component.change(clicked_component, properties={'is_toolbox':False})    
+
+    def should_make_link(self, c1, c2):
+        return c1.__class__.__name__ == 'OutLink' and c2.__class__.__name__ == 'InLink'
+
+    def make_link(self, c1, c2):
+        link = c1.link_to(c2)
+        self.components.append(link)
+        link.graphic.draw(self)
+    
+    def component_at(self, x, y):
+        for component in self.components:
+            if component.graphic.contains_position((x,y)):
+                return component
+
+        return None
+        

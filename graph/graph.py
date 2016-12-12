@@ -50,6 +50,12 @@ class Graph():
         for node in self.nodes:
             for out_link in node.get_links_out():
                 out_link.mark_satisfied(False)
+
+
+class Singleton(Graph):
+
+    def __init__(self, vertex):
+        self.nodes = [vertex]
         
 class Link():
 
@@ -110,6 +116,9 @@ class Node():
     def in_degree(self):
         return len(self.links_in)
 
+    def get_links(self):
+        return self.links_in + self.links_out
+    
     def get_links_out(self):
         return self.links_out
 
