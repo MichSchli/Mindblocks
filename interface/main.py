@@ -94,7 +94,10 @@ class Interface(tk.Tk):
         
 
     def predict_selection(self):
-        self.selection.predict()
+        graph = self.selected_component.get().get_graph()
+        predict_function = graph.compile_theano(mode='predict')
+        print(predict_function())
+
         
     def add_canvases(self):
         self.note = ttk.Notebook(self.left_frame)

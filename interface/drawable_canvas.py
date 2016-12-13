@@ -20,12 +20,12 @@ class DrawableCanvas(tk.Canvas):
         if clicked_component is None and self.selected_component.properties['is_toolbox']:
             new_component = self.selected_component.get().copy(identifier=len(self.components))
             self.components.append(new_component)
-            self.graphs.append(new_component.initialize_singleton_graph())
-            self.components.extend(new_component.get_links())
+            self.components.extend(new_component.get_sub_components())
 
-            new_component.graphic.draw(self, (x,y))
-            for link in new_component.get_links():
-                link.graphic.draw_from_parent(self)
+            self.graphs.append(new_component.get_graph())
+
+            new_component.set_position(x,y)
+            new_component.draw(self)
                                   
             self.selected_component.change(new_component, properties={'is_toolbox':False})
         else:
@@ -42,7 +42,7 @@ class DrawableCanvas(tk.Canvas):
     def make_link(self, c1, c2):
         link = c1.link_to(c2)
         self.components.append(link)
-        link.graphic.draw(self)
+        link.graphic.draw(self, None)
     
     def component_at(self, x, y):
         for component in self.components:

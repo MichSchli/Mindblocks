@@ -1,8 +1,6 @@
-import imp
+from interface.drawable_canvas import DrawableCanvas
 
-components = imp.load_source('graphics','components/component.py')
-abstract = imp.load_source('abstract','interface/drawable_canvas.py')
 
-class OptimizerCanvas(abstract.DrawableCanvas):
+class OptimizerCanvas(DrawableCanvas):
 
-    available_components=[components.Placeholder("o1")]
+    available_components=[]

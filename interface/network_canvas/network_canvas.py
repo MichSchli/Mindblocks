@@ -1,11 +1,8 @@
-import imp
+from interface.drawable_canvas import DrawableCanvas
+from components.basic.network.constant import Constant
+from components.basic.network.output import Output
 
-components = imp.load_source('graphics','components/component.py')
-tmp_c = imp.load_source('constant','components/basic/network/constant.py')
-tmp_o = imp.load_source('constant','components/basic/network/output.py')
 
-abstract = imp.load_source('abstract','interface/drawable_canvas.py')
+class NetworkCanvas(DrawableCanvas):
 
-class NetworkCanvas(abstract.DrawableCanvas):
-
-    available_components = [tmp_c.Constant(), tmp_o.Output()]
+    available_components = [Constant(create_graph=False), Output(create_graph=False)]

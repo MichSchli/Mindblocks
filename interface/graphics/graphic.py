@@ -59,7 +59,7 @@ class PlaceholderGraphic(Graphic):
         #l = Link(self)
         #l.draw_from_parent(canvas, [0,-self.height/2])
         
-class Link(Graphic):
+class LinkBall(Graphic):
 
     link_radius = 6
     
@@ -83,13 +83,13 @@ class Link(Graphic):
     def contains_position(self, position):
         return (position[0] - self.center[0])**2 + (position[1] - self.center[1])**2 <= self.link_radius**2
 
-class Edge(Graphic):
+class EdgeLine(Graphic):
 
     def __init__(self, out_graphic, in_graphic):
         self.out_graphic = out_graphic
         self.in_graphic = in_graphic
 
-    def draw(self, canvas):
+    def draw(self, canvas, position):
         canvas.create_line(self.out_graphic.center[0], self.out_graphic.center[1], self.in_graphic.center[0], self.in_graphic.center[1])
 
     # TODO
