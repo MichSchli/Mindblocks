@@ -3,6 +3,7 @@ from graph.graph import Graph
 
 class Vertex:
     graph = None
+    attributes = {}
 
     def __init__(self):
         self.edges_out = []
