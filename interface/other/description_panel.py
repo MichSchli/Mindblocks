@@ -72,12 +72,22 @@ class DescriptionBox(tk.Frame):
             if len(line) != 2 or len(line[1])==0:
                 return None
 
-        return {l[0]:np.fromstring(l[1], sep=' ') for l in lines}
+        d = {}
+        for line in lines:
+            parsed = self.parse_field(line[1])
+            if parsed is None:
+                return None
 
+            d[line[0]] = parsed
+
+        return d
+
+    def parse_field(self, string):
+        return string
 
     def change(self, component):
         self.component = component
         self.text_field.delete(1.0, tk.END)
         if component is not None:
             for attribute in component.attributes:
-                self.text_field.insert(tk.END, attribute+"="+str(component.attributes[attribute]))
+                self.text_field.insert(tk.END, attribute+"="+str(component.attributes[attribute])+'\n')

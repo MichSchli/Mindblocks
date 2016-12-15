@@ -4,8 +4,7 @@ import imp
 
 selection = imp.load_source('selection', 'interface/selection.py')
 network = imp.load_source('network','interface/network_canvas/network_canvas.py')
-optimizer = imp.load_source('optimizer','interface/optimizer_canvas/optimizer_canvas.py')
-dataset = imp.load_source('dataset','interface/dataset_canvas/dataset_canvas.py')
+dataset = imp.load_source('dataset','interface/preprocessing_canvas/preprocessing_canvas.py')
 
 graphics = imp.load_source('graphics','interface/graphics/graphic.py')
 
@@ -76,17 +75,14 @@ class Interface(tk.Tk):
             if event.widget.index("current") == 0:
                 self.selected_canvas.change(self.network_canvas)
             elif event.widget.index("current") == 1:
-                self.selected_canvas.change(self.optimizer_canvas)
-            elif event.widget.index("current") == 2:
-                self.selected_canvas.change(self.dataset_canvas)
+                self.selected_canvas.change(self.preprocessing_canvas)
                         
         self.note.bind_all("<<NotebookTabChanged>>", tabChangedEvent)
 
     def initialize_component_selection(self):
         self.selected_component = selection.Selection(None, properties = {'is_toolbox':False})
         self.network_canvas.selected_component = self.selected_component
-        self.optimizer_canvas.selected_component = self.selected_component
-        self.dataset_canvas.selected_component = self.selected_component
+        self.preprocessing_canvas.selected_component = self.selected_component
         self.toolbox.selected_component = self.selected_component
         self.description_panel.selected_component = self.selected_component
 
@@ -94,7 +90,7 @@ class Interface(tk.Tk):
         
 
     def predict_selection(self):
-        graph = self.selected_component.get().get_graph()
+        graph = self.network_canvas.get_selected_graph()
         predict_function = graph.compile_theano(mode='predict')
         print(predict_function())
 
@@ -103,12 +99,10 @@ class Interface(tk.Tk):
         self.note = ttk.Notebook(self.left_frame)
         
         self.network_canvas = network.NetworkCanvas(self.note)
-        self.optimizer_canvas = optimizer.OptimizerCanvas(self.note)
-        self.dataset_canvas = dataset.DatasetCanvas(self.note)
+        self.preprocessing_canvas = dataset.DatasetCanvas(self.note)
 
         self.note.add(self.network_canvas, text="Network")
-        self.note.add(self.optimizer_canvas, text="Optimizer")
-        self.note.add(self.dataset_canvas, text="Datasets")
+        self.note.add(self.preprocessing_canvas, text="Preprocessing")
         
         self.note.pack(side=tk.LEFT, expand=True, fill=tk.BOTH, anchor="nw")
 

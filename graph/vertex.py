@@ -10,6 +10,17 @@ class Vertex:
         self.edges_in = []
         self.initialize_graph()
 
+    def parse_attributes(self):
+        return True
+
+    def get_upstream_trainables(self):
+        trainables = []
+        for edge in self.edges_in:
+            vertex = edge.origin
+            trainables.extend(vertex.get_upstream_trainables())
+        return trainables
+
+
     def push_by_index(self, index, value):
         self.edges_out[index].push(value)
 

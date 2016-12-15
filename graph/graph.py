@@ -59,6 +59,7 @@ class Graph:
 
         for vertex in self.topological_walk():
             print(vertex)
+            print(vertex.parse_attributes())
             vertex.compile_theano()
             inputs.extend(vertex.theano_inputs())
             outputs.extend(vertex.theano_outputs())
