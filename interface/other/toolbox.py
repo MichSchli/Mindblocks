@@ -48,9 +48,12 @@ class ToolboxCanvas(tk.Canvas):
 
         
     def on_button_press(self, event):
-        click = (event.x, event.y)
-        clicked_slice = (int((event.x - self.border_width) / 100), int((event.y - self.border_width) / 100))
-        clicked_slice_idx = clicked_slice[0] + clicked_slice[1]*2        
+        x = self.canvasx(event.x)
+        y = self.canvasy(event.y)
+
+        click = (x,y)
+        clicked_slice = (int(x / 100), int(y / 100))
+        clicked_slice_idx = clicked_slice[0] + clicked_slice[1]*2
 
         if len(self.component_slices) <= clicked_slice_idx or not self.component_slices[clicked_slice_idx].click(click):
             self.parent.clicked(None)
