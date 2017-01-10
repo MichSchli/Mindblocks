@@ -21,8 +21,8 @@ class Vertex:
         return trainables
 
 
-    def push_by_index(self, index, value):
-        self.edges_out[index].push(value)
+    def push_by_index(self, index, value, type='tensor'):
+        self.edges_out[index].push(value, type)
 
     def pull_by_index(self, index):
         return self.edges_in[index].pull()
@@ -73,14 +73,5 @@ class Vertex:
         return []
 
     def compile_theano(self):
-        pass
-
-class Operation(Vertex):
-    def __init__(self):
-        pass
-
-
-class Link(Vertex):
-    def __init__(self):
         pass
 

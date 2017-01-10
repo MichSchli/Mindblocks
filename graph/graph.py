@@ -49,6 +49,7 @@ class Graph:
 
     def compile_theano(self, mode='predict'):
         inputs, outputs, parameters = self.build_theano_graph(mode)
+        print(inputs, outputs, parameters)
         fn = theano.function(inputs=inputs, outputs=outputs)
         return fn
 

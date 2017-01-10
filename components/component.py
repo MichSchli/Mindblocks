@@ -113,7 +113,7 @@ class OutLink(Link):
         value = self.pull_by_index(0)
 
         for edge in self.get_edges_out():
-            edge.push(value)
+            edge.push(value, self.get_edges_in()[0].type)
 
 class InLink(Link):
 
@@ -128,7 +128,7 @@ class InLink(Link):
 
     def compile_theano(self):
         if len(self.get_edges_in()) == 1:
-            self.push_by_index(0, self.pull_by_index(0))
+            self.push_by_index(0, self.pull_by_index(0), self.get_edges_in()[0].type)
         else:
             values = [edge.pull() for edge in self.get_edges_in()]
             concatenated = T.concatenate(values, axis=-1)

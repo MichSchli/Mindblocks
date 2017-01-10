@@ -3,8 +3,8 @@ import theano.tensor as T
 from components.component import Component
 
 
-class Gradient(Component):
-    name = "Gradient"
+class AllGradients(Component):
+    name = "AllGradients"
     links_out = [{'position': [0, -20],
                   'name': 'Output'}
                  ]
@@ -16,7 +16,7 @@ class Gradient(Component):
         function = self.pull_by_index(0)
         print(trainables)
         print(function)
-        self.push_by_index(0, T.grad(function, wrt=trainables))
+        self.push_by_index(0, T.grad(function, wrt=trainables), type='list')
 
     def copy(self, identifier=None):
-        return Gradient(identifier=identifier)
+        return AllGradients(identifier=identifier)

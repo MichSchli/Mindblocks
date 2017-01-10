@@ -5,7 +5,7 @@ from interface.drawable_canvas import DrawableCanvas
 from components.basic.network.dot_product import Dot
 from components.basic.network.constant import Constant
 from components.basic.network.output import Output
-from components.basic.network.gradient import Gradient
+from components.basic.network.allgradients import AllGradients
 
 
 class NetworkCanvas(DrawableCanvas):
@@ -15,5 +15,5 @@ class NetworkCanvas(DrawableCanvas):
                             Dot(create_graph=False),
                             Sigmoid(create_graph=False),
                             TrainableParameter(create_graph=False),
-                            Gradient(create_graph=False),
+                            AllGradients(create_graph=False),
                             SGD(create_graph=False)]

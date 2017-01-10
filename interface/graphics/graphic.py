@@ -49,7 +49,6 @@ class PlaceholderGraphic(Graphic):
         ymin = position[1] - height / 2
         ymax = position[1] + height / 2
 
-        print(xmin, ymin, xmax, ymax)
         self.position = (xmin, ymin, xmax, ymax)
 
         #TODO: offset for no reason

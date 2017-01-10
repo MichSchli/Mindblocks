@@ -1,6 +1,7 @@
 class Edge:
 
     value = None
+    type=None
 
     def __init__(self, u, v):
         self.satisfied = False
@@ -16,7 +17,8 @@ class Edge:
     def get_destination(self):
         return self.destination
 
-    def push(self, value):
+    def push(self, value, type=None):
+        self.type = type
         self.value = value
 
     def pull(self):

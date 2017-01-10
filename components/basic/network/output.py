@@ -12,6 +12,13 @@ class Output(abstract.Component):
         return Output(identifier=identifier)
 
     def theano_outputs(self):
-        return [self.pull_by_index(0)]
+        to_be_output = self.pull_by_index(0)
+
+        print(self.edges_in[0].type)
+
+        if self.edges_in[0].type == 'scalar' or self.edges_in[0].type == 'tensor':
+            return [to_be_output]
+        elif self.edges_in[0].type == 'list':
+            return to_be_output
 
 
