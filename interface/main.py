@@ -12,7 +12,6 @@ menu = imp.load_source('menu','interface/other/menubar.py')
 toolbox = imp.load_source('toolbox','interface/other/toolbox.py')
 description = imp.load_source('toolbox','interface/other/description_panel.py')
 
-graph = imp.load_source('graph', 'graph/graph.py')
 
 class Interface(tk.Tk):
     def __init__(self):
@@ -38,19 +37,7 @@ class Interface(tk.Tk):
 
         self.layout()
 
-        '''
-        Temporary graph: output a constant, no training
-        '''
-        
-        self.selection = graph.Graph()
 
-        const = graph.Constant(5)
-        out = graph.Output()
-
-        self.selection.add_node(const)
-        self.selection.add_node(out)
-
-        const.get_links_out()[0].put(out.get_links_in()[0])
         
 
     def make_support_frames(self):

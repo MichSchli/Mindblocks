@@ -13,9 +13,13 @@ class TrainableParameter(Component):
                   'initialization': 'normal(0,0.1)'}
 
     parsed_attributes = None
+    variable = None
 
     def compile_theano(self):
-        self.variable = theano.shared(self.parsed_attributes['initialization'](self.parsed_attributes['dimension']))
+        #hack
+        if self.variable is None:
+            self.variable = theano.shared(self.parsed_attributes['initialization'](self.parsed_attributes['dimension']))
+
         self.push_by_index(0, self.variable)
 
     def get_upstream_trainables(self):

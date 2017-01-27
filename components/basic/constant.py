@@ -20,7 +20,7 @@ class Constant(Component):
         return Constant(identifier=identifier)
 
     def parse_value_string(self, string):
-        return np.fromstring(string, sep=' ')
+        return np.fromstring(string, sep=' ', dtype=np.float32)
 
     def parse_attributes(self):
         d = {'value': self.parse_value_string(self.attributes['value'])}

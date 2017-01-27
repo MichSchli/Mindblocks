@@ -1,0 +1,13 @@
+{
+   "name": "Nonlinearities",
+   "files": [
+      {
+         "name": "sigmoid.py",
+         "components": [
+            {
+               "name": "Sigmoid"
+            }
+         ]
+      }
+   ]
+}

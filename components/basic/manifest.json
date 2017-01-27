@@ -1,0 +1,29 @@
+{
+   "name": "Basic Components",
+   "files": [
+      {
+         "name": "constant.py",
+         "components": [
+            {
+               "name": "Constant"
+            }
+         ]
+      },
+      {
+         "name": "output.py",
+         "components": [
+            {
+               "name": "Output"
+            }
+         ]
+      },
+      {
+         "name": "trainable_parameter.py",
+         "components": [
+            {
+               "name": "TrainableParameter"
+            }
+         ]
+      }
+   ]
+}

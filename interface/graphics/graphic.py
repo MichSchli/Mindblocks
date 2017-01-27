@@ -51,7 +51,6 @@ class PlaceholderGraphic(Graphic):
 
         self.position = (xmin, ymin, xmax, ymax)
 
-        #TODO: offset for no reason
         canvas.create_rectangle(xmin,ymin,xmax,ymax)
         canvas.create_text(position[0], position[1], text=self.title)
 

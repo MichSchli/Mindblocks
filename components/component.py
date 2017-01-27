@@ -32,6 +32,7 @@ class Component(Vertex, UIComponent):
 
     links_in = []
     links_out = []
+    source_string = None
 
     def __init__(self, name=None, identifier=None, create_graph=True):
         if name is not None:
@@ -62,6 +63,7 @@ class Component(Vertex, UIComponent):
             link = OutLink(description, self)
             self.add_edge(link)
             self.sub_components.append(link)
+
     
 class Link(Vertex, UIComponent):
 

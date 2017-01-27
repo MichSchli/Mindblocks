@@ -1,0 +1,13 @@
+{
+   "name": "Math",
+   "files": [
+      {
+         "name": "dot_product.py",
+         "components": [
+            {
+               "name": "Dot"
+            }
+         ]
+      }
+   ]
+}

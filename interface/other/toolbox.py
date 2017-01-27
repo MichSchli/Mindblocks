@@ -1,4 +1,5 @@
 import tkinter as tk
+import math
 
 class Toolbox(tk.Frame):
 
@@ -16,8 +17,8 @@ class Toolbox(tk.Frame):
         self.canvas.scrollbar.pack(side=tk.RIGHT, expand=True, fill=tk.Y, pady=0, padx=0, anchor="ne")
         self.canvas.pack(side=tk.RIGHT, expand=True, fill=tk.Y, pady=0, padx=0, anchor="ne")
         
-    def display_list(self, component_list):
-        self.components = component_list
+    def display_modules(self, modules):
+        self.modules = modules
         self.update_components()
 
     def set_selection(self, component):
@@ -29,75 +30,142 @@ class Toolbox(tk.Frame):
 
     def update_components(self):
         self.set_selection(None)
-        self.canvas.set_components(self.components)
+        self.canvas.set_modules(self.modules)
 
     def canvas_selection_changed(self, selection):
-        self.display_list(selection.get().available_components)
+        self.display_modules(selection.get().available_modules)
 
 class ToolboxCanvas(tk.Canvas):
 
     border_width = 5
+    module_areas = []
     
     def __init__(self, parent):
         self.scrollbar = tk.Scrollbar(parent)
-        tk.Canvas.__init__(self, parent, width=200, cursor="cross", borderwidth=self.border_width, relief='sunken', yscrollcommand=self.scrollbar.set)
+        tk.Canvas.__init__(self, parent, width=201, cursor="cross", borderwidth=self.border_width, relief='sunken', yscrollcommand=self.scrollbar.set)
         self.bind("<ButtonPress-1>", self.on_button_press)
         self.scrollbar.config(command=self.yview)
-        self.next_position = [0,0]
         self.parent = parent
 
-        
+    def set_modules(self, modules):
+        for module in modules:
+            module_area = ComponentArea(self, module)
+            self.module_areas.append(module_area)
+
+        self.draw_modules()
+
+    def draw_modules(self):
+        self.delete("all")
+
+        offset = 0
+        for module_area in self.module_areas:
+            module_area.draw(offset=offset)
+            offset += module_area.get_height()
+
+        self.config(scrollregion=(0, 0, 200 + self.border_width * 2, offset + self.border_width))
+
     def on_button_press(self, event):
         x = self.canvasx(event.x)
         y = self.canvasy(event.y)
 
-        click = (x,y)
-        clicked_slice = (int(x / 100), int(y / 100))
-        clicked_slice_idx = clicked_slice[0] + clicked_slice[1]*2
+        offset = 0
+        for module_area in self.module_areas:
+            if y < offset + module_area.get_height():
+                module_area.click(x-6,y-offset)
+                break
+            else:
+                offset += module_area.get_height()
 
-        if len(self.component_slices) <= clicked_slice_idx or not self.component_slices[clicked_slice_idx].click(click):
-            self.parent.clicked(None)
+
+
+class ComponentArea:
+
+    active = True
+
+    def __init__(self, canvas, module):
+        self.canvas = canvas
+        self.module = module
+
+        self.header = SeparatorBar(canvas, module.get_name())
+
+        self.components = [component.component_class() for component in module.components]
+        self.component_slices = [ComponentSlice(self.canvas, component) for component in self.components]
+
+    def draw(self, offset=6):
+        self.header.draw(y_offset=offset)
+        offset += self.header.get_height()
+        if self.active:
+            self.draw_components(offset)
+
+    def draw_components(self, offset):
+        position = [6,offset]
+        odd = False
+        for slice in self.component_slices:
+            slice.draw(position)
+            odd = not odd
+
+            if odd:
+                position[0] += 100
+            else:
+                position[0] -= 100
+                position[1] += 100
+
+
+    def get_height(self):
+        height = self.header.get_height()
+        if self.active:
+            height += math.ceil(len(self.component_slices) / 2)*100
+        return height
+
+    def toggle(self):
+        self.active = not self.active
+        self.canvas.draw_modules()
+
+    def click(self, x, y):
+        if y < self.header.get_height():
+            self.toggle()
         else:
-            self.parent.clicked(self.component_slices[clicked_slice_idx].component)
-        
-    def set_components(self, components):
-        n_rows = len(components) / 2 + len(components) % 2
-        self.reset(n_rows)
+            y -= self.header.get_height()
+            slice = math.floor(x / 100) + math.floor(y / 100) * 2
+            self.component_slices[slice].click(x % 100,y % 100)
 
-        for component in components:
-            self.draw_component(component)
 
-    def draw_component(self, component):
-        self.component_slices.append(ComponentSlice(component, self, self.next_position))
-        self.component_slices[-1].draw()
-        self.update_position()
 
-    def update_position(self):
-        if self.next_position[1] == 0:
-            self.next_position[1] = 1
-        else:
-            self.next_position[1] = 0
-            self.next_position[0] += 1
-            
-    def reset(self, new_rows):
-        self.delete("all")
-        self.config(scrollregion=(0, 0, 200+self.border_width*2, new_rows*100+self.border_width*2))
-        self.next_position = [0,0]
-        self.component_slices = []
+class SeparatorBar:
 
+    default_width = 200
+    default_height = 26
+
+    def __init__(self, canvas, name):
+        self.canvas = canvas
+        self.name = name
+
+    def get_coords(self, x_offset, y_offset):
+        return 0 + x_offset, 0 + y_offset, self.default_width + x_offset, self.default_height + y_offset
+
+    def get_text_coords(self, x_offset, y_offset):
+        return self.default_width / 2 + x_offset, self.default_height / 2 + y_offset
+
+    def draw(self, x_offset=6, y_offset=6):
+        self.canvas.create_rectangle(*self.get_coords(x_offset, y_offset))
+        text_coords = self.get_text_coords(x_offset, y_offset)
+        self.canvas.create_text(text_coords[0], text_coords[1], text=self.name)
+
+    def get_height(self):
+        return self.default_height
 
 class ComponentSlice():
 
     padding = 10
 
-    def __init__(self, component, canvas, position):
+    def __init__(self, canvas, component):
         self.component = component
         self.canvas = canvas
-        self.position = position
 
-    def draw(self):
-        x = self.position[1]*100+self.canvas.border_width
-        y = self.position[0]*100+self.canvas.border_width
+    def draw(self, position):
+        print(position)
+        x = position[0]
+        y = position[1]
 
         x_max_size = 100 - self.padding * 2
         y_max_size = 100 - self.padding * 2
@@ -107,6 +175,6 @@ class ComponentSlice():
 
         self.component.graphic.draw(self.canvas, (x_center, y_center), fit_to_size=(x_max_size, y_max_size))
 
-    def click(self, position):
-        return self.component.graphic.contains_position(position)
+    def click(self, x, y):
+        self.canvas.parent.clicked(self.component)
         

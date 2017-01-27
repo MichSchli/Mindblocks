@@ -69,7 +69,7 @@ class Vertex:
     def theano_outputs(self):
         return []
 
-    def theano_parameters(self):
+    def theano_updates(self):
         return []
 
     def compile_theano(self):

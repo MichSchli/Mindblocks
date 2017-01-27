@@ -48,15 +48,15 @@ class Graph:
         return self.edges
 
     def compile_theano(self, mode='predict'):
-        inputs, outputs, parameters = self.build_theano_graph(mode)
-        print(inputs, outputs, parameters)
-        fn = theano.function(inputs=inputs, outputs=outputs)
+        inputs, outputs, updates = self.build_theano_graph(mode)
+        print(inputs, outputs, updates)
+        fn = theano.function(inputs=inputs, outputs=outputs, updates=updates)
         return fn
 
     def build_theano_graph(self, mode):
         inputs = []
         outputs = []
-        parameters = []
+        updates = []
 
         for vertex in self.topological_walk():
             print(vertex)
@@ -64,9 +64,9 @@ class Graph:
             vertex.compile_theano()
             inputs.extend(vertex.theano_inputs())
             outputs.extend(vertex.theano_outputs())
-            parameters.extend(vertex.theano_parameters())
+            updates.extend(vertex.theano_updates())
 
-        return inputs, outputs, parameters
+        return inputs, outputs, updates
 
     def topological_walk(self):
         S = [vertex for vertex in self.vertices if vertex.in_degree() == 0]

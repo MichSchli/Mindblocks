@@ -1,0 +1,21 @@
+{
+   "name": "Training",
+   "files": [
+      {
+         "name": "allgradients.py",
+         "components": [
+            {
+               "name": "AllGradients"
+            }
+         ]
+      },
+      {
+         "name": "sgd.py",
+         "components": [
+            {
+               "name": "SGD"
+            }
+         ]
+      }
+   ]
+}
