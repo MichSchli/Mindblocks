@@ -30,6 +30,7 @@ class Menubar(tk.Menu):
             ),
             ("Compile",
              [
+                 ("Run", self.compile),
                  ("Options", self.placeholder)
              ]
             )
@@ -55,6 +56,9 @@ class Menubar(tk.Menu):
 
     def train(self):
         self.root.train_selection()
+
+    def compile(self):
+        self.root.compile_selection()
         
     def __add_menu_from_list__(self, title, l):
         menu = tk.Menu(self, tearoff=0)

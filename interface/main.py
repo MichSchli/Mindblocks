@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 import imp
 
+from compilation.compiler import Compiler, MindblocksCompiler
+
 selection = imp.load_source('selection', 'interface/selection.py')
 network = imp.load_source('network','interface/network_canvas/network_canvas.py')
 dataset = imp.load_source('dataset','interface/preprocessing_canvas/preprocessing_canvas.py')
@@ -80,6 +82,15 @@ class Interface(tk.Tk):
         graph = self.network_canvas.get_selected_graph()
         predict_function = graph.compile_theano(mode='predict')
         print(predict_function())
+
+    def compile_selection(self):
+        print("Compiling functions...")
+        graph = self.network_canvas.get_selected_graph()
+
+        c = MindblocksCompiler()
+        c.compile(graph, "out.py")
+
+        print("done")
 
         
     def add_canvases(self):

@@ -1,5 +1,6 @@
 {
    "name": "Math",
+   "module_name": "components.math",
    "files": [
       {
          "name": "dot_product.py",

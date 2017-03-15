@@ -1,5 +1,6 @@
 {
    "name": "Training",
+   "module_name": "components.training",
    "files": [
       {
          "name": "allgradients.py",

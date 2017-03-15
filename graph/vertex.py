@@ -4,6 +4,7 @@ from graph.graph import Graph
 class Vertex:
     graph = None
     attributes = {}
+    name = "ERROR"
 
     def __init__(self):
         self.edges_out = []
@@ -74,4 +75,3 @@ class Vertex:
 
     def compile_theano(self):
         pass
-

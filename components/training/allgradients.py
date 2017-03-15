@@ -17,6 +17,3 @@ class AllGradients(Component):
         print(trainables)
         print(function)
         self.push_by_index(0, T.grad(function, wrt=trainables), type='list')
-
-    def copy(self, identifier=None):
-        return AllGradients(identifier=identifier)

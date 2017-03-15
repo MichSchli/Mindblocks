@@ -15,5 +15,3 @@ class Dot(Component):
         right = self.pull_by_index(1)
         self.push_by_index(0, T.dot(left, right))
 
-    def copy(self, identifier=None):
-        return Dot(identifier=identifier)

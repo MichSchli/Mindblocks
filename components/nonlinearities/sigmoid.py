@@ -12,6 +12,3 @@ class Sigmoid(Component):
     def compile_theano(self):
         input = self.pull_by_index(0)
         self.push_by_index(0, T.nnet.sigmoid(input))
-
-    def copy(self, identifier=None):
-        return Sigmoid(identifier=identifier)

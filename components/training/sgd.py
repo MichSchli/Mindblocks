@@ -12,9 +12,6 @@ class SGD(Component):
                  'name': 'Gradient'}]
     attributes = {'learning rate': '0.1'}
 
-    def copy(self, identifier=None):
-        return SGD(identifier=identifier)
-
     def parse_float(self, string):
         return np.fromstring(string, sep=' ', dtype=np.float32)
 

@@ -1,5 +1,6 @@
 {
    "name": "Nonlinearities",
+   "module_name": "components.nonlinearities",
    "files": [
       {
          "name": "sigmoid.py",

@@ -1,7 +1,5 @@
 import numpy as np
-
 import theano
-
 from components.component import Component
 
 
@@ -15,9 +13,6 @@ class Constant(Component):
 
     def compile_theano(self):
         self.push_by_index(0, theano.tensor.constant(self.parsed_attributes['value']))
-
-    def copy(self, identifier=None):
-        return Constant(identifier=identifier)
 
     def parse_value_string(self, string):
         return np.fromstring(string, sep=' ', dtype=np.float32)

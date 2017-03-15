@@ -33,6 +33,7 @@ class Component(Vertex, UIComponent):
     links_in = []
     links_out = []
     source_string = None
+    attributes = {}
 
     def __init__(self, name=None, identifier=None, create_graph=True):
         if name is not None:
@@ -50,7 +51,7 @@ class Component(Vertex, UIComponent):
     def get_name(self):
         name_string = self.name
         if self.identifier is not None:
-            name_string += "#"+str(self.identifier)
+            name_string += "_"+str(self.identifier)
         return name_string
 
     def create_links(self):
@@ -64,25 +65,52 @@ class Component(Vertex, UIComponent):
             self.add_edge(link)
             self.sub_components.append(link)
 
-    
+    def copy(self, identifier=None):
+        return self.__class__(identifier=identifier)
+
+    def python_init(self):
+        yield self.get_name() + " = " +  self.__class__.__name__ + "()"
+        yield "graph.merge(" + self.get_name() + ".get_graph())"
+        if self.attributes != {}:
+            yield self.get_name() + ".attributes = " + str(self.attributes)
+        for enumerator, in_edge in enumerate(self.edges_in):
+            yield in_edge.origin.get_name() + " = " + self.get_name() + ".edges_in[" + str(enumerator) + "].origin"
+        for enumerator, out_edge in enumerate(self.edges_out):
+            yield out_edge.destination.get_name() + " = " + self.get_name() + ".edges_out[" + str(enumerator) + "].destination"
+
+        for in_edge in self.edges_in:
+            in_link = in_edge.origin
+            for x in in_link.edges_in:
+                yield "graph.add_edge(" + x.origin.get_name() + ", " + in_link.get_name() + ")"
+        yield ""
+
+    def get_python_import(self):
+        return "from " + self.module + " import " + self.__class__.__name__
+
+
+
 class Link(Vertex, UIComponent):
 
     link_radius = 6
 
-    def __init__(self, description, parent):
+    def __init__(self, description=None, parent=None):
         self.description = description
         self.parent = parent
 
         Vertex.__init__(self)
-        UIComponent.__init__(self)
+
+        if description is not None:
+            UIComponent.__init__(self)
 
     def get_graphic(self):
         return None
 
     def get_name(self):
+        if self.description is None:
+            return "hej"
         parent_name = self.parent.get_name()
         name = self.description['name']
-        return parent_name + '-' + name
+        return parent_name + '_' + name
 
     def calculate_position_from_parent(self):
         #TODO this is shit
@@ -95,7 +123,15 @@ class Link(Vertex, UIComponent):
     def set_position_from_parent(self):
         x, y = self.calculate_position_from_parent()
         self.set_position(x, y)
-        
+
+
+    def get_python_import(self):
+        return None
+
+    def python_init(self):
+        yield None
+
+
 class OutLink(Link):
 
     partners = []
@@ -117,6 +153,7 @@ class OutLink(Link):
         for edge in self.get_edges_out():
             edge.push(value, self.get_edges_in()[0].type)
 
+
 class InLink(Link):
 
     partner = None
@@ -135,6 +172,8 @@ class InLink(Link):
             values = [edge.pull() for edge in self.get_edges_in()]
             concatenated = T.concatenate(values, axis=-1)
             self.push_by_index(0, concatenated)
+
+
     
 class Edge(UIComponent):
     

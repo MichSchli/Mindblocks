@@ -25,9 +25,6 @@ class TrainableParameter(Component):
     def get_upstream_trainables(self):
         return [self.variable]
 
-    def copy(self, identifier=None):
-        return TrainableParameter(identifier=identifier)
-
     def parse_dimension_string(self, string):
         return np.fromstring(string, sep=' ', dtype=np.uint8)
 

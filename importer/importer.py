@@ -34,10 +34,13 @@ class Importer:
 
     def fill_module(self, module):
         component_files = module.manifest['files']
+        module_path = module.manifest['module_name']
         for file in component_files:
             path = os.path.join(module.path, file['name'])
+            file_path = module_path + "." + file['name'].split(".")[0]
             loaded_file = importlib.machinery.SourceFileLoader("module", path).load_module()
 
             for component in file['components']:
+                component['file_path'] = file_path
                 component_class = getattr(loaded_file, component['name'])
                 module.add_component(ImportedComponent(component, component_class))

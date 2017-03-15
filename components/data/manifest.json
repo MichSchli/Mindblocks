@@ -1,0 +1,14 @@
+{
+   "name": "Data",
+   "module_name": "components.data",
+   "files": [
+      {
+         "name": "csv_input.py",
+         "components": [
+            {
+               "name": "CsvInput"
+            }
+         ]
+      }
+   ]
+}

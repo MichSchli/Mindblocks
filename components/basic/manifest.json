@@ -1,5 +1,6 @@
 {
    "name": "Basic Components",
+   "module_name": "components.basic",
    "files": [
       {
          "name": "constant.py",
