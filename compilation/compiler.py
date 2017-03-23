@@ -1,22 +1,32 @@
 class Compiler:
 
+    header_compiler = None
+    graph_compiler = None
+
+    def __init__(self, graph_compiler):
+        self.graph_compiler = graph_compiler
+
     def compile(self, graph, output_file):
         output_file = open(output_file, 'w')
 
         self.write_section_header(output_file, "Imports")
-        self.write_imports(graph, output_file)
+        for line in self.graph_compiler.yield_headers(graph):
+            print(line, file=output_file)
         print("", file=output_file)
 
         self.write_section_header(output_file, "Arguments")
-        self.write_arguments(graph, output_file)
+        #self.write_arguments(graph, output_file)
         print("", file=output_file)
 
         self.write_section_header(output_file, "Code")
-        self.write_graph(graph, output_file)
+        for line in self.graph_compiler.yield_code(graph):
+            print(line, file=output_file)
         print("", file=output_file)
 
         self.write_section_header(output_file, "Run")
-        self.write_output(graph, output_file)
+        for line in self.graph_compiler.yield_run(graph):
+            print(line, file=output_file)
+        #self.write_output(graph, output_file)
 
         output_file.close()
 
@@ -26,7 +36,7 @@ class Compiler:
         print("import argparse", file=output_file)
         print("", file=output_file)
         print("""argument_parser = argparse.ArgumentParser(description="Generated mindblocks model.")""", file=output_file)
-        print("""argument_parser.add_argument("--mode", help="train/predict.", required=True)""", file=output_file)
+        #print("""argument_parser.add_argument("--mode", help="train/predict.", required=True)""", file=output_file)
 
         for inp in inputs:
             print("""argument_parser.add_argument("--p1", help="TBA.", required=True)""", file=output_file)
@@ -38,20 +48,4 @@ class Compiler:
         print("# " + section + ":", file=output_file)
         print("#=================================", file=output_file)
         print("", file=output_file)
-
-
-class MindblocksCompiler(Compiler):
-
-    def write_imports(self, graph, output_file):
-        for line in graph.compile_python_imports():
-            print(line, file=output_file)
-
-    def write_graph(self, graph, output_file):
-        for line in graph.compile_python():
-            print(line, file=output_file)
-
-    def write_output(self, graph, output_file):
-        for line in graph.run_python():
-            print(line, file=output_file)
-
 

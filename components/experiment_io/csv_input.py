@@ -16,8 +16,8 @@ class CsvInput(Component):
 
     graph_input = None
 
-    def __init__(self, identifier=None):
-        Component.__init__(self, identifier=identifier)
+    def __init__(self, manifest=None, identifier=None):
+        Component.__init__(self, manifest=manifest, identifier=identifier)
         self.graph_input = GraphInput(self.get_name()+"_input", [3])
 
     def parse_column_string(self, string):

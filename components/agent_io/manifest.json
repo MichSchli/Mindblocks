@@ -1,0 +1,24 @@
+{
+   "name": "IO",
+   "module_name": "components.agent_io",
+   "views": ["agent"],
+   "languages": ["theano"],
+   "files": [
+      {
+         "name": "tensor_output.py",
+         "components": [
+            {
+               "name": "TensorOutput"
+            }
+         ]
+      },
+      {
+         "name": "tensor_input.py",
+         "components": [
+            {
+               "name": "TensorInput"
+            }
+         ]
+      }
+   ]
+}

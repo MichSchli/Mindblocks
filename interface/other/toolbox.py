@@ -6,6 +6,7 @@ class Toolbox(tk.Frame):
     components = []
     canvas = None
     selected_component = None
+    modules = []
 
     def __init__(self, parent):
         tk.Frame.__init__(self, parent, width=200)
@@ -33,7 +34,7 @@ class Toolbox(tk.Frame):
         self.canvas.set_modules(self.modules)
 
     def canvas_selection_changed(self, selection):
-        self.display_modules(selection.get().available_modules)
+        self.display_modules(selection.get().get_available_modules())
 
 class ToolboxCanvas(tk.Canvas):
 
@@ -48,6 +49,7 @@ class ToolboxCanvas(tk.Canvas):
         self.parent = parent
 
     def set_modules(self, modules):
+        self.module_areas = []
         for module in modules:
             module_area = ComponentArea(self, module)
             self.module_areas.append(module_area)
@@ -88,8 +90,7 @@ class ComponentArea:
 
         self.header = SeparatorBar(canvas, module.get_name())
 
-        self.components = [component.component_class() for component in module.components]
-        self.component_slices = [ComponentSlice(self.canvas, component) for component in self.components]
+        self.component_slices = [ComponentSlice(self.canvas, component) for component in module.components]
 
     def draw(self, offset=6):
         self.header.draw(y_offset=offset)
@@ -163,7 +164,6 @@ class ComponentSlice():
         self.canvas = canvas
 
     def draw(self, position):
-        print(position)
         x = position[0]
         y = position[1]
 
@@ -173,7 +173,7 @@ class ComponentSlice():
         x_center = x + 50
         y_center = y + 50
 
-        self.component.graphic.draw(self.canvas, (x_center, y_center), fit_to_size=(x_max_size, y_max_size))
+        self.component.instantiate().graphic.draw(self.canvas, (x_center, y_center), fit_to_size=(x_max_size, y_max_size))
 
     def click(self, x, y):
         self.canvas.parent.clicked(self.component)

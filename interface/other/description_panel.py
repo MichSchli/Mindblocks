@@ -89,5 +89,5 @@ class DescriptionBox(tk.Frame):
         self.component = component
         self.text_field.delete(1.0, tk.END)
         if component is not None:
-            for attribute in component.attributes:
-                self.text_field.insert(tk.END, attribute+"="+str(component.attributes[attribute])+'\n')
+            for attribute in component.get_attributes():
+                self.text_field.insert(tk.END, attribute+"="+str(component.get_attributes()[attribute])+'\n')

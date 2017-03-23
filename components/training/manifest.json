@@ -1,6 +1,8 @@
 {
    "name": "Training",
    "module_name": "components.training",
+   "views": ["inference"],
+   "languages" : ["theano"],
    "files": [
       {
          "name": "allgradients.py",

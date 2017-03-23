@@ -75,3 +75,6 @@ class Vertex:
 
     def compile_theano(self):
         pass
+
+    def compile_python(self):
+        pass

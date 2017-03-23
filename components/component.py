@@ -18,7 +18,6 @@ class UIComponent:
         return self.sub_components
 
     def draw(self, canvas):
-        print(self.graphic)
         self.graphic.draw(canvas, self.position)
         for sub_component in self.sub_components:
             sub_component.draw(canvas)
@@ -34,12 +33,14 @@ class Component(Vertex, UIComponent):
     links_out = []
     source_string = None
     attributes = {}
+    chosen_language = None
 
-    def __init__(self, name=None, identifier=None, create_graph=True):
-        if name is not None:
-            self.name = name
+    def __init__(self, manifest=None, identifier=None, create_graph=True):
+        self.name = manifest['name']
+        self.manifest = manifest
 
         self.identifier = identifier
+        self.chosen_language = self.manifest['languages'][0]
 
         UIComponent.__init__(self)
 
@@ -65,12 +66,13 @@ class Component(Vertex, UIComponent):
             self.add_edge(link)
             self.sub_components.append(link)
 
-    def copy(self, identifier=None):
-        return self.__class__(identifier=identifier)
+    def get_attributes(self):
+        return self.attributes
 
-    def python_init(self):
-        yield self.get_name() + " = " +  self.__class__.__name__ + "()"
-        yield "graph.merge(" + self.get_name() + ".get_graph())"
+    def python_init(self, arguments={}):
+        yield "manifest = "+str(self.manifest)
+        yield self.get_name() + " = " +  self.__class__.__name__ + "(manifest=manifest)"
+        yield arguments['name'] + ".merge(" + self.get_name() + ".get_graph())"
         if self.attributes != {}:
             yield self.get_name() + ".attributes = " + str(self.attributes)
         for enumerator, in_edge in enumerate(self.edges_in):
@@ -81,11 +83,11 @@ class Component(Vertex, UIComponent):
         for in_edge in self.edges_in:
             in_link = in_edge.origin
             for x in in_link.edges_in:
-                yield "graph.add_edge(" + x.origin.get_name() + ", " + in_link.get_name() + ")"
+                yield arguments['name'] + ".add_edge(" + x.origin.get_name() + ", " + in_link.get_name() + ")"
         yield ""
 
     def get_python_import(self):
-        return "from " + self.module + " import " + self.__class__.__name__
+        yield "from " + self.module + " import " + self.__class__.__name__
 
 
 
@@ -126,9 +128,9 @@ class Link(Vertex, UIComponent):
 
 
     def get_python_import(self):
-        return None
+        yield None
 
-    def python_init(self):
+    def python_init(self, arguments={}):
         yield None
 
 
@@ -154,6 +156,13 @@ class OutLink(Link):
             edge.push(value, self.get_edges_in()[0].type)
 
 
+    def compile_python(self):
+        value = self.pull_by_index(0)
+
+        for edge in self.get_edges_out():
+            edge.push(value, self.get_edges_in()[0].type)
+
+
 class InLink(Link):
 
     partner = None
@@ -172,6 +181,13 @@ class InLink(Link):
             values = [edge.pull() for edge in self.get_edges_in()]
             concatenated = T.concatenate(values, axis=-1)
             self.push_by_index(0, concatenated)
+
+    def compile_python(self):
+        if len(self.get_edges_in()) == 1:
+            self.push_by_index(0, self.pull_by_index(0), self.get_edges_in()[0].type)
+        else:
+            values = [edge.pull() for edge in self.get_edges_in()]
+            self.push_by_index(0, values)
 
 
     

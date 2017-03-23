@@ -14,6 +14,9 @@ class Constant(Component):
     def compile_theano(self):
         self.push_by_index(0, theano.tensor.constant(self.parsed_attributes['value']))
 
+    def compile_python(self):
+        self.push_by_index(0, self.parsed_attributes['value'])
+
     def parse_value_string(self, string):
         return np.fromstring(string, sep=' ', dtype=np.float32)
 

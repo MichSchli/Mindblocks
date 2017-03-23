@@ -4,6 +4,8 @@
    "files": [
       {
          "name": "constant.py",
+         "views": ["agent"],
+         "languages" : ["theano", "python"],
          "components": [
             {
                "name": "Constant"
@@ -11,15 +13,19 @@
          ]
       },
       {
-         "name": "output.py",
+         "name": "constant.py",
+         "views": ["experiment"],
+         "languages" : ["python", "theano"],
          "components": [
             {
-               "name": "Output"
+               "name": "Constant"
             }
          ]
       },
       {
          "name": "trainable_parameter.py",
+         "views": ["agent"],
+         "languages" : ["theano"],
          "components": [
             {
                "name": "TrainableParameter"

@@ -1,6 +1,8 @@
 {
    "name": "Math",
    "module_name": "components.math",
+   "views": ["agent"],
+   "languages" : ["theano"],
    "files": [
       {
          "name": "dot_product.py",

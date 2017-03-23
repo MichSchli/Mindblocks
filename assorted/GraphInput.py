@@ -16,3 +16,4 @@ class GraphInput:
     def compile_theano(self):
         b = tuple([False for _ in self.var_dim])
         self.variable = T.TensorType(dtype=self.var_type, broadcastable=b)(self.name)
+        return self.variable

@@ -12,13 +12,20 @@ class Graph:
     vertices = None
     edges = None
 
-    def __init__(self, vertex=None):
+    def __init__(self, vertex=None, identifier=None):
         if vertex is not None:
             self.vertices = [vertex]
         else:
             self.vertices = []
 
+        if not vertex is None:
+            self.identifier = vertex.get_name()
+        else:
+            self.identifier = identifier
         self.edges = []
+
+    def get_identifier(self):
+        return 'graph:'+str(self.identifier)
 
     def add_edge(self, u, v):
         edge = Edge(u, v)
@@ -56,7 +63,6 @@ class Graph:
 
     def compile_theano(self, mode='predict'):
         inputs, outputs, updates = self.build_theano_graph(mode)
-        print(inputs, outputs, updates)
         fn = theano.function(inputs=inputs, outputs=outputs, updates=updates)
         return fn
 
@@ -94,15 +100,18 @@ class Graph:
             inputs.extend(vertex.theano_inputs())
         return inputs
 
+    def get_outputs(self):
+        outputs = []
+        for vertex in self.topological_walk():
+            outputs.extend(vertex.theano_outputs())
+        return outputs
+
     def build_theano_graph(self, mode):
         inputs = []
         outputs = []
         updates = []
 
         for vertex in self.topological_walk():
-            print(vertex)
-            print(vertex.get_name())
-            print(vertex.parse_attributes())
             vertex.compile_theano()
             inputs.extend(vertex.theano_inputs())
             outputs.extend(vertex.theano_outputs())
@@ -110,28 +119,20 @@ class Graph:
 
         return inputs, outputs, updates
 
+    def get_chosen_language(self):
+        return self.topological_walk()[0].get_chosen_language()
+
     def topological_walk(self):
         S = [vertex for vertex in self.vertices if vertex.in_degree() == 0]
-
-        for edge in self.edges:
-            print(edge)
-            print(edge.origin)
-            print(edge.destination)
-
-        print(self.vertices[0].get_edges_out())
 
         while len(S) > 0:
             next_vertex = S.pop()
 
             # Propagate forward in the graph:
             for out_edge in next_vertex.get_edges_out():
-                print("HAHAHAH")
-                print(out_edge.get_destination())
                 out_edge.mark_satisfied(True)
                 if out_edge.get_destination().is_satisfied():
                     S.append(out_edge.get_destination())
-
-                print(out_edge)
 
             yield next_vertex
 

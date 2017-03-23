@@ -1,0 +1,24 @@
+{
+   "name": "IO",
+   "module_name": "components.experiment_io",
+   "views": ["experiment"],
+   "languages" : ["python"],
+   "files": [
+      {
+         "name": "csv_input.py",
+         "components": [
+            {
+               "name": "CsvInput"
+            }
+         ]
+      },
+      {
+         "name": "console_printer.py",
+         "components": [
+            {
+               "name": "ConsolePrinter"
+            }
+         ]
+      }
+   ]
+}

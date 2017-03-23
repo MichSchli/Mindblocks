@@ -1,0 +1,16 @@
+{
+   "name": "Graphs",
+   "module_name": "components.graph",
+   "views": [],
+   "files": [
+      {
+         "name": "subgraph_component.py",
+         "languages" : ["python"],
+         "components": [
+            {
+               "name": "SubgraphComponent"
+            }
+         ]
+      }
+   ]
+}

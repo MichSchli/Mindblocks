@@ -9,8 +9,10 @@ class DrawableCanvas(tk.Canvas):
     parent = None
     selected_graph = None
     graphs = []
+    view_name = None
+    available_modules = None
     
-    def __init__(self, parent):
+    def __init__(self, parent, module_manager):
         self.x = self.y = 0
         tk.Canvas.__init__(self, parent, cursor="cross", borderwidth=4, relief='sunken')
         self.bind("<ButtonPress-1>", self.on_button_press)
@@ -18,6 +20,13 @@ class DrawableCanvas(tk.Canvas):
 
         self.parent = parent
         self.selected_graph = Selection(None)
+        self.module_manager = module_manager
+
+
+    def get_available_modules(self):
+        modules = self.module_manager.fetch_basis_modules(view=self.view_name)
+        modules.extend(self.module_manager.fetch_graph_modules(view=self.view_name))
+        return modules
 
     def on_button_press(self, event):
         x = event.x
@@ -26,11 +35,14 @@ class DrawableCanvas(tk.Canvas):
         clicked_component = self.component_at(x,y)
         
         if clicked_component is None and self.selected_component.properties['is_toolbox']:
-            new_component = self.selected_component.get().copy(identifier=len(self.components))
+            new_component = self.selected_component.get().instantiate(identifier=len(self.components))
             self.components.append(new_component)
             self.components.extend(new_component.get_sub_components())
 
-            self.graphs.append(new_component.get_graph())
+            graph = new_component.get_graph()
+
+            self.graphs.append(graph)
+            self.module_manager.register_graph(self.view_name, graph)
 
             new_component.set_position(x,y)
             new_component.draw(self)
@@ -56,6 +68,7 @@ class DrawableCanvas(tk.Canvas):
         return self.selected_graph.get()
 
     def make_link(self, c1, c2):
+        self.module_manager.delete_graph(self.view_name, c2.get_graph())
         link = c1.link_to(c2)
         self.components.append(link)
         link.graphic.draw(self, None)
