@@ -4,7 +4,6 @@ from identifiables.identifiable import Identifiable
 class Vertex(Identifiable):
     graph = None
     attributes = {}
-    name = "ERROR"
 
     def __init__(self, name="vertex"):
         Identifiable.__init__(self, name=name)

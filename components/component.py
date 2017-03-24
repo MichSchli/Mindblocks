@@ -134,7 +134,6 @@ class OutLink(Link):
     def link_to(self, in_link):
         self.partners.append(in_link)
         in_link.set_partner(self)
-        self.add_edge(in_link)
 
         #Temporarily we cannot delete components
         return Edge(self, in_link)

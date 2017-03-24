@@ -3,16 +3,18 @@ from tkinter import ttk
 
 from compilation.compiler import Compiler
 from compilation.graph_compiler import GraphCompiler
+from compilation.graph_runner import GraphRunner
 from identifiables.identifierFactory import IdentifierFactory
+from interface.drawable_canvas import DrawableCanvas
 from interface.other.description_panel import DescriptionPanel
 from interface.other.menubar import Menubar
 from interface.other.toolbox import Toolbox
 from interface.selection import Selection
 from interface.views.agent_view import AgentView
 from interface.views.experiment_view import ExperimentView
-from interface.views.inference_view import InferenceView
 from module_management.module_importer import ModuleImporter
 from module_management.module_manager import ModuleManager
+from views.view import View
 
 
 class Interface(tk.Tk):
@@ -39,9 +41,6 @@ class Interface(tk.Tk):
 
         self.layout()
 
-
-        
-
     def make_support_frames(self):
         self.left_frame = tk.Frame(self, background="blue")
         self.right_frame = tk.Frame(self, background="green")
@@ -64,8 +63,6 @@ class Interface(tk.Tk):
             if event.widget.index("current") == 0:
                 self.selected_canvas.change(self.agent_view)
             elif event.widget.index("current") == 1:
-                self.selected_canvas.change(self.inference_view)
-            elif event.widget.index("current") == 2:
                 self.selected_canvas.change(self.experiment_view)
                         
         self.note.bind_all("<<NotebookTabChanged>>", tabChangedEvent)
@@ -74,7 +71,6 @@ class Interface(tk.Tk):
         self.selected_component = Selection(None, properties = {'is_toolbox':False})
 
         self.agent_view.selected_component = self.selected_component
-        self.inference_view.selected_component = self.selected_component
         self.experiment_view.selected_component = self.selected_component
 
         self.toolbox.selected_component = self.selected_component
@@ -84,9 +80,9 @@ class Interface(tk.Tk):
         
 
     def predict_selection(self):
-        graph = self.agent_view.get_selected_graph()
-        predict_function = graph.compile_theano(mode='predict')
-        print(predict_function())
+        graph = self.experiment_view.get_selected_graph()
+        runner = GraphRunner()
+        print(runner.run(graph))
 
     def compile_selection(self):
         print("Compiling functions...")
@@ -104,13 +100,15 @@ class Interface(tk.Tk):
         module_importer = ModuleImporter()
         module_manager = ModuleManager(module_importer)
         identifier_factory = IdentifierFactory()
+
+        #TODO: Awaiting tests, refactor
+        actual_agent_view = View("agent", module_manager, identifier_factory)
+        actual_experiment_view = View("experiment", module_manager, identifier_factory)
         
-        self.agent_view = AgentView(self.note, module_manager, identifier_factory)
-        self.inference_view = InferenceView(self.note, module_manager, identifier_factory)
-        self.experiment_view = ExperimentView(self.note, module_manager, identifier_factory)
+        self.agent_view = DrawableCanvas(self.note, actual_agent_view)
+        self.experiment_view = DrawableCanvas(self.note, actual_experiment_view)
 
         self.note.add(self.agent_view, text="Agents")
-        self.note.add(self.inference_view, text="Inference")
         self.note.add(self.experiment_view, text="Experiment")
         
         self.note.pack(side=tk.LEFT, expand=True, fill=tk.BOTH, anchor="nw")

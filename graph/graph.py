@@ -57,39 +57,6 @@ class Graph(Identifiable):
     def get_edges(self):
         return self.edges
 
-    def compile_theano(self, mode='predict'):
-        inputs, outputs, updates = self.build_theano_graph(mode)
-        fn = theano.function(inputs=inputs, outputs=outputs, updates=updates)
-        return fn
-
-    def run_python(self):
-        yield """fn = graph.compile_theano(mode=args.mode)"""
-        yield "fn()"
-
-    def compile_python(self):
-        yield "graph = Graph()"
-        yield ""
-        for line in self.build_python_graph():
-            yield line
-
-    def build_python_graph(self):
-        for vertex in self.topological_walk():
-            for line in vertex.python_init():
-                if line is not None:
-                    yield line
-
-    def fetch_python_imports(self):
-        for vertex in self.topological_walk():
-            statement = vertex.get_python_import()
-            if statement is not None:
-                yield statement
-
-    def compile_python_imports(self):
-        yield "from graph.graph import Graph"
-        imports = self.fetch_python_imports()
-        for line in set(imports):
-            yield line
-
     def get_inputs(self):
         inputs = []
         for vertex in self.topological_walk():
@@ -101,22 +68,6 @@ class Graph(Identifiable):
         for vertex in self.topological_walk():
             outputs.extend(vertex.theano_outputs())
         return outputs
-
-    def build_theano_graph(self, mode):
-        inputs = []
-        outputs = []
-        updates = []
-
-        for vertex in self.topological_walk():
-            vertex.compile_theano()
-            inputs.extend(vertex.theano_inputs())
-            outputs.extend(vertex.theano_outputs())
-            updates.extend(vertex.theano_updates())
-
-        return inputs, outputs, updates
-
-    def get_chosen_language(self):
-        return self.topological_walk()[0].get_chosen_language()
 
     def topological_walk(self):
         S = [vertex for vertex in self.vertices if vertex.in_degree() == 0]

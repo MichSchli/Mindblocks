@@ -13,7 +13,7 @@ class ModuleManager:
                        'inference':[],
                        'experiment':[]}
 
-    def fetch_basis_modules(self, view=None):
+    def fetch_basic_modules(self, view=None):
         modules = []
         for module in self.basic_modules:
             filtered_module = module.get_filtered_copy(view)
@@ -28,13 +28,10 @@ class ModuleManager:
             if agent_module.has_components():
                 graph_modules.append(agent_module)
 
-            inference_module = self.compile_graph_module('inference')
-            if inference_module.has_components():
-                graph_modules.append(inference_module)
-
         return graph_modules
 
     def compile_graph_module(self, target_view):
+        print(self.graphs)
         module_manifest = {'name': target_view}
         module = Module(module_manifest)
         for graph in self.graphs[target_view]:
@@ -46,11 +43,13 @@ class ModuleManager:
         return module
 
     def register_graph(self, view, graph):
+        print(graph.get_unique_identifier())
         self.graphs[view].append(graph)
 
     def delete_graph(self, view, graph):
+        print(graph.get_unique_identifier())
         new_graphs = []
         for stored_graph in self.graphs[view]:
-            if stored_graph.get_identifier() != graph.get_identifier():
+            if stored_graph.get_unique_identifier() != graph.get_unique_identifier():
                 new_graphs.append(stored_graph)
         self.graphs[view] = new_graphs

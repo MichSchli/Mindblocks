@@ -29,6 +29,17 @@ class GraphConnectivityTest(unittest.TestCase):
 
         self.assertEqual(vertex1.get_graph(), vertex2.get_graph())
 
+    def testJoinPreservesOriginGraph(self):
+        vertex1 = Vertex()
+        vertex2 = Vertex()
+        graph = vertex1.get_graph()
+
+        vertex1.add_edge(vertex2)
+
+        self.assertEqual(vertex1.get_graph(), graph)
+        self.assertEqual(vertex2.get_graph(), graph)
+
+
     def testLargerGraphsJoined(self):
         vertex1 = Vertex()
         vertex2 = Vertex()

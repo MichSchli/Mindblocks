@@ -1,7 +1,6 @@
 import unittest
 
 from graph.edge import Edge
-from graph.graph import Graph
 from graph.vertex import Vertex
 
 

@@ -8,12 +8,8 @@ class DrawableCanvas(tk.Canvas):
     components = None
     parent = None
     selected_graph = None
-    graphs = []
-    view_name = None
-    available_modules = None
-    identifier_factory = None
     
-    def __init__(self, parent, module_manager, identifier_factory):
+    def __init__(self, parent, view):
         self.x = self.y = 0
         tk.Canvas.__init__(self, parent, cursor="cross", borderwidth=4, relief='sunken')
         self.bind("<ButtonPress-1>", self.on_button_press)
@@ -21,15 +17,12 @@ class DrawableCanvas(tk.Canvas):
 
         self.parent = parent
         self.selected_graph = Selection(None)
-        self.module_manager = module_manager
 
-        self.identifier_factory = identifier_factory
-
+        self.view = view
 
     def get_available_modules(self):
-        modules = self.module_manager.fetch_basis_modules(view=self.view_name)
-        modules.extend(self.module_manager.fetch_graph_modules(view=self.view_name))
-        return modules
+        self.view.load_modules()
+        return self.view.get_available_modules()
 
     def on_button_press(self, event):
         x = event.x
@@ -38,18 +31,10 @@ class DrawableCanvas(tk.Canvas):
         clicked_component = self.component_at(x,y)
         
         if clicked_component is None and self.selected_component.properties['is_toolbox']:
-            new_component = self.selected_component.get().instantiate()
-
-            self.identifier_factory.assign_identifier(new_component)
-            self.identifier_factory.assign_identifier(new_component.get_graph())
+            new_component = self.view.instantiate(self.selected_component.get())
 
             self.components.append(new_component)
             self.components.extend(new_component.get_sub_components())
-
-            graph = new_component.get_graph()
-
-            self.graphs.append(graph)
-            self.module_manager.register_graph(self.view_name, graph)
 
             new_component.set_position(x,y)
             new_component.draw(self)
@@ -61,10 +46,26 @@ class DrawableCanvas(tk.Canvas):
             self.selected_graph.change(None)
         else:
             if self.should_make_link(self.selected_component.get(), clicked_component):
-                self.make_link(self.selected_component.get(), clicked_component)
+                self.view.create_edge(self.selected_component.get(), clicked_component)
+
+                c1 = self.selected_component.get()
+                c2 = clicked_component
+
+                link = c1.link_to(c2)
+                self.components.append(link)
+                link.graphic.draw(self, None)
+
                 self.selected_graph.change(clicked_component.get_graph())
             elif self.should_make_link(clicked_component, self.selected_component.get()):
-                self.make_link(clicked_component, self.selected_component.get())
+                self.view.create_edge(clicked_component, self.selected_component.get())
+
+                c1 = clicked_component
+                c2 = self.selected_component.get()
+
+                link = c1.link_to(c2)
+                self.components.append(link)
+                link.graphic.draw(self, None)
+
                 self.selected_graph.change(clicked_component.get_graph())
             else:
                 self.selected_component.change(clicked_component, properties={'is_toolbox':False})
