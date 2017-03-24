@@ -3,6 +3,7 @@ from tkinter import ttk
 
 from compilation.compiler import Compiler
 from compilation.graph_compiler import GraphCompiler
+from identifiables.identifierFactory import IdentifierFactory
 from interface.other.description_panel import DescriptionPanel
 from interface.other.menubar import Menubar
 from interface.other.toolbox import Toolbox
@@ -102,10 +103,11 @@ class Interface(tk.Tk):
 
         module_importer = ModuleImporter()
         module_manager = ModuleManager(module_importer)
+        identifier_factory = IdentifierFactory()
         
-        self.agent_view = AgentView(self.note, module_manager)
-        self.inference_view = InferenceView(self.note, module_manager)
-        self.experiment_view = ExperimentView(self.note, module_manager)
+        self.agent_view = AgentView(self.note, module_manager, identifier_factory)
+        self.inference_view = InferenceView(self.note, module_manager, identifier_factory)
+        self.experiment_view = ExperimentView(self.note, module_manager, identifier_factory)
 
         self.note.add(self.agent_view, text="Agents")
         self.note.add(self.inference_view, text="Inference")

@@ -36,7 +36,7 @@ class DescriptionTitle(tk.Frame):
         if component is None:
             title = "<No selection>"
         else:
-            title = component.get_name()
+            title = component.get_unique_identifier()
 
         if len(title) > self.max_length:
             title = title[:self.max_length]+"..."

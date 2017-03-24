@@ -11,8 +11,9 @@ class DrawableCanvas(tk.Canvas):
     graphs = []
     view_name = None
     available_modules = None
+    identifier_factory = None
     
-    def __init__(self, parent, module_manager):
+    def __init__(self, parent, module_manager, identifier_factory):
         self.x = self.y = 0
         tk.Canvas.__init__(self, parent, cursor="cross", borderwidth=4, relief='sunken')
         self.bind("<ButtonPress-1>", self.on_button_press)
@@ -21,6 +22,8 @@ class DrawableCanvas(tk.Canvas):
         self.parent = parent
         self.selected_graph = Selection(None)
         self.module_manager = module_manager
+
+        self.identifier_factory = identifier_factory
 
 
     def get_available_modules(self):
@@ -35,7 +38,11 @@ class DrawableCanvas(tk.Canvas):
         clicked_component = self.component_at(x,y)
         
         if clicked_component is None and self.selected_component.properties['is_toolbox']:
-            new_component = self.selected_component.get().instantiate(identifier=len(self.components))
+            new_component = self.selected_component.get().instantiate()
+
+            self.identifier_factory.assign_identifier(new_component)
+            self.identifier_factory.assign_identifier(new_component.get_graph())
+
             self.components.append(new_component)
             self.components.extend(new_component.get_sub_components())
 
@@ -55,8 +62,10 @@ class DrawableCanvas(tk.Canvas):
         else:
             if self.should_make_link(self.selected_component.get(), clicked_component):
                 self.make_link(self.selected_component.get(), clicked_component)
+                self.selected_graph.change(clicked_component.get_graph())
             elif self.should_make_link(clicked_component, self.selected_component.get()):
                 self.make_link(clicked_component, self.selected_component.get())
+                self.selected_graph.change(clicked_component.get_graph())
             else:
                 self.selected_component.change(clicked_component, properties={'is_toolbox':False})
                 self.selected_graph.change(clicked_component.get_graph())

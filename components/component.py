@@ -2,6 +2,7 @@ from graph.graph import Graph
 from graph.vertex import Vertex
 from interface.graphics.graphic import *
 import theano.tensor as T
+from identifiables.identifiable import Identifiable
 
 class UIComponent:
 
@@ -27,7 +28,7 @@ class UIComponent:
         for sub_component in self.sub_components:
             sub_component.set_position_from_parent()
 
-class Component(Vertex, UIComponent):
+class Component(Vertex, UIComponent, Identifiable):
 
     links_in = []
     links_out = []
@@ -39,21 +40,15 @@ class Component(Vertex, UIComponent):
         self.name = manifest['name']
         self.manifest = manifest
 
-        self.identifier = identifier
         self.chosen_language = self.manifest['languages'][0]
 
         UIComponent.__init__(self)
 
         if create_graph:
-            Vertex.__init__(self)
+            Vertex.__init__(self, name=self.name)
             self.create_links()
-
-        
-    def get_name(self):
-        name_string = self.name
-        if self.identifier is not None:
-            name_string += "_"+str(self.identifier)
-        return name_string
+        else:
+            Identifiable.__init__(self, name=self.name)
 
     def create_links(self):
         for description in self.links_in:
@@ -71,14 +66,14 @@ class Component(Vertex, UIComponent):
 
     def python_init(self, arguments={}):
         yield "manifest = "+str(self.manifest)
-        yield self.get_name() + " = " +  self.__class__.__name__ + "(manifest=manifest)"
-        yield arguments['name'] + ".merge(" + self.get_name() + ".get_graph())"
+        yield self.get_unique_identifier() + " = " +  self.__class__.__name__ + "(manifest=manifest)"
+        yield arguments['name'] + ".merge(" + self.get_unique_identifier() + ".get_graph())"
         if self.attributes != {}:
-            yield self.get_name() + ".attributes = " + str(self.attributes)
+            yield self.get_unique_identifier() + ".attributes = " + str(self.attributes)
         for enumerator, in_edge in enumerate(self.edges_in):
-            yield in_edge.origin.get_name() + " = " + self.get_name() + ".edges_in[" + str(enumerator) + "].origin"
+            yield in_edge.origin.get_unique_identifier() + " = " + self.get_unique_identifier() + ".edges_in[" + str(enumerator) + "].origin"
         for enumerator, out_edge in enumerate(self.edges_out):
-            yield out_edge.destination.get_name() + " = " + self.get_name() + ".edges_out[" + str(enumerator) + "].destination"
+            yield out_edge.destination.get_unique_identifier() + " = " + self.get_unique_identifier() + ".edges_out[" + str(enumerator) + "].destination"
 
         for in_edge in self.edges_in:
             in_link = in_edge.origin
@@ -99,20 +94,15 @@ class Link(Vertex, UIComponent):
         self.description = description
         self.parent = parent
 
-        Vertex.__init__(self)
+        self.name = parent.get_name() + '_' + description['name']
+
+        Vertex.__init__(self, name=self.name)
 
         if description is not None:
             UIComponent.__init__(self)
 
     def get_graphic(self):
         return None
-
-    def get_name(self):
-        if self.description is None:
-            return "hej"
-        parent_name = self.parent.get_name()
-        name = self.description['name']
-        return parent_name + '_' + name
 
     def calculate_position_from_parent(self):
         #TODO this is shit

@@ -13,6 +13,10 @@ class ModuleComponent:
     def get_name(self):
         return self.manifest['name']
 
+    # TODO: Hack
+    def get_unique_identifier(self):
+        return self.get_name()
+
     def get_attributes(self):
         return self.component_class.attributes
 

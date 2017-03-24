@@ -1,12 +1,13 @@
 from graph.graph import Graph
+from identifiables.identifiable import Identifiable
 
-
-class Vertex:
+class Vertex(Identifiable):
     graph = None
     attributes = {}
     name = "ERROR"
 
-    def __init__(self):
+    def __init__(self, name="vertex"):
+        Identifiable.__init__(self, name=name)
         self.edges_out = []
         self.edges_in = []
         self.initialize_graph()
@@ -21,6 +22,8 @@ class Vertex:
             trainables.extend(vertex.get_upstream_trainables())
         return trainables
 
+    def get_name(self):
+        return self.name
 
     def push_by_index(self, index, value, type='tensor'):
         self.edges_out[index].push(value, type)

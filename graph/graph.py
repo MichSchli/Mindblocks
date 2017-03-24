@@ -1,9 +1,10 @@
 import theano
 
 from graph.edge import Edge
+from identifiables.identifiable import Identifiable
 
 
-class Graph:
+class Graph(Identifiable):
     """
     Class representing a computational graph. The graph is a directed, tripartite tree, with vertices split into
     operations, input-links, and output-links.
@@ -12,20 +13,15 @@ class Graph:
     vertices = None
     edges = None
 
-    def __init__(self, vertex=None, identifier=None):
+    def __init__(self, vertex=None):
         if vertex is not None:
             self.vertices = [vertex]
         else:
             self.vertices = []
 
-        if not vertex is None:
-            self.identifier = vertex.get_name()
-        else:
-            self.identifier = identifier
-        self.edges = []
+        Identifiable.__init__(self, name="graph")
 
-    def get_identifier(self):
-        return 'graph:'+str(self.identifier)
+        self.edges = []
 
     def add_edge(self, u, v):
         edge = Edge(u, v)
