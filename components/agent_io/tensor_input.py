@@ -19,8 +19,6 @@ class TensorInput(Component):
         self.push_by_index(0, self.variable)
 
     def parse_dimension_string(self, string):
-        print(string)
-        print( np.fromstring(string, sep=' ', dtype=np.int32))
         return np.fromstring(string, sep=' ', dtype=np.int32)
 
     def parse_attributes(self):
@@ -35,4 +33,4 @@ class TensorInput(Component):
         return True
 
     def theano_inputs(self):
-        return [self.variable]
+        yield (self.get_unique_identifier() + "_variable", self.variable)

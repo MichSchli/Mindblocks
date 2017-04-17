@@ -11,6 +11,5 @@ class TensorOutput(Component):
     def theano_outputs(self):
         to_be_output = self.pull_by_index(0)
 
-        return [to_be_output]
-
+        yield (self.get_unique_identifier() + "_output", to_be_output)
 

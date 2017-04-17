@@ -1,8 +1,7 @@
-import theano.tensor as T
-
 from compilation.graph_compiler import GraphCompiler
-from compilation.graph_runner import GraphRunner
 from components.component import Component
+from graph_runners.python_graph_runner import GraphRunner
+from graph_runners.theano_graph_runner import TheanoGraphRunner
 
 
 class SubgraphComponent(Component):
@@ -44,45 +43,39 @@ class SubgraphComponent(Component):
         pass
 
     def compile_python(self):
-        gr= GraphRunner()
+        input_d = {}
+        for i in range(len(self.inputs)):
+            input_d[self.inputs[i]] = self.pull_by_index(i)
 
-        #TODO: Get type
-        for vertex in self.sub_graph.vertices:
-            vertex.parse_attributes()
+        output_d = self.graph_runner.run(self.sub_graph, input_d)
 
-        compiled_graph = self.sub_graph.compile_theano()
-        print("doner")
-        args = tuple([self.pull_by_index(i) for i in range(len(self.links_in))])
-
-        print(args)
-        results = compiled_graph(*args)
-
-        for i,r in enumerate(results):
-            self.push_by_index(i,r)
+        for i in range(len(self.outputs)):
+            self.push_by_index(i, output_d[self.outputs[i]])
 
 
     def __init__(self, graph, manifest=None, identifier=None, create_graph=True):
         self.sub_graph = graph
+        self.graph_runner = TheanoGraphRunner()
 
-        inputs = self.sub_graph.get_inputs()
-        outputs = self.sub_graph.get_outputs()
+        self.inputs = [i[0] for i in self.sub_graph.get_inputs()]
+        self.outputs = [o[0] for o in self.sub_graph.get_outputs()]
 
         available_space = 80
 
         self.links_in = []
         self.links_out = []
 
-        if len(inputs) > 0:
-            input_spacing = available_space/(len(inputs))
-            for i,inp in enumerate(inputs):
+        if len(self.inputs) > 0:
+            input_spacing = available_space/(len(self.inputs))
+            for i,inp in enumerate(self.inputs):
                 self.links_in.append({'position': [-40 + int((i+0.5) * input_spacing), 20],
-                                      'name': 'Input_'+str(i)})
+                                      'name': inp})
 
-        if len(outputs) > 0:
-            output_spacing = available_space/(len(outputs))
-            for i,oup in enumerate(outputs):
+        if len(self.outputs) > 0:
+            output_spacing = available_space/(len(self.outputs))
+            for i,oup in enumerate(self.outputs):
                 self.links_out.append({'position': [-40 + int((i+0.5) * output_spacing), -20],
-                                      'name': 'Output_'+str(i)})
+                                      'name': oup})
 
 
         Component.__init__(self, manifest=manifest, identifier=identifier, create_graph=create_graph)

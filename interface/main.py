@@ -3,15 +3,13 @@ from tkinter import ttk
 
 from compilation.compiler import Compiler
 from compilation.graph_compiler import GraphCompiler
-from compilation.graph_runner import GraphRunner
+from graph_runners.python_graph_runner import GraphRunner
 from identifiables.identifierFactory import IdentifierFactory
 from interface.drawable_canvas import DrawableCanvas
 from interface.other.description_panel import DescriptionPanel
 from interface.other.menubar import Menubar
 from interface.other.toolbox import Toolbox
 from interface.selection import Selection
-from interface.views.agent_view import AgentView
-from interface.views.experiment_view import ExperimentView
 from module_management.module_importer import ModuleImporter
 from module_management.module_manager import ModuleManager
 from views.view import View
@@ -82,7 +80,7 @@ class Interface(tk.Tk):
     def predict_selection(self):
         graph = self.experiment_view.get_selected_graph()
         runner = GraphRunner()
-        print(runner.run(graph))
+        print(runner.run(graph, {}))
 
     def compile_selection(self):
         print("Compiling functions...")
