@@ -18,7 +18,7 @@ class ModuleComponent:
         return self.get_name()
 
     def get_attributes(self):
-        return self.component_class.attributes
+        return self.component_class.default_attributes
 
 
 class GraphModuleComponent(ModuleComponent):

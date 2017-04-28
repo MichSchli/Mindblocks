@@ -8,7 +8,7 @@ class Constant(Component):
     links_out = [{'position': [0, -20],
                   'name': 'Output'}]
 
-    attributes = {'value': '0'}
+    default_attributes = {'value': '0'}
     parsed_attributes = None
 
     def compile_theano(self):

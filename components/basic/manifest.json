@@ -4,18 +4,8 @@
    "files": [
       {
          "name": "constant.py",
-         "views": ["agent"],
+         "views": ["agent", "experiment"],
          "languages" : ["theano", "python"],
-         "components": [
-            {
-               "name": "Constant"
-            }
-         ]
-      },
-      {
-         "name": "constant.py",
-         "views": ["experiment"],
-         "languages" : ["python", "theano"],
          "components": [
             {
                "name": "Constant"

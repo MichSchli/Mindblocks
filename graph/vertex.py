@@ -3,13 +3,15 @@ from identifiables.identifiable import Identifiable
 
 class Vertex(Identifiable):
     graph = None
-    attributes = {}
+    attributes = None
+    manifest = None
 
     def __init__(self, name="vertex"):
         Identifiable.__init__(self, name=name)
         self.edges_out = []
         self.edges_in = []
         self.initialize_graph()
+        self.attributes = {}
 
     def parse_attributes(self):
         return True
@@ -37,7 +39,7 @@ class Vertex(Identifiable):
         self.set_graph(Graph(self))
 
     def add_edge(self, other):
-        self.graph.merge_and_link(self, other)
+        return self.graph.merge_and_link(self, other)
 
     def get_graph(self):
         return self.graph

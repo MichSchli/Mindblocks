@@ -7,7 +7,8 @@ class Menubar(tk.Menu):
             ("File",
              [
                  ("New", self.placeholder),
-                 ("Save", self.placeholder),
+                 ("Save", self.save),
+                 ("Save View", self.placeholder),
                  ("Load", self.placeholder),
                  ("Exit", self.quit_f)
              ]
@@ -47,6 +48,9 @@ class Menubar(tk.Menu):
 
     def placeholder(self):
         pass
+
+    def save(self):
+        self.root.save()
             
     def quit_f(self):
         self.root.quit()

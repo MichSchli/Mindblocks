@@ -22,3 +22,8 @@ class Module:
 
     def get_name(self):
         return self.manifest['name']
+
+    def get_component(self, name):
+        for component in self.components:
+            if component.manifest['name'] == name:
+                return component

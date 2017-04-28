@@ -9,13 +9,13 @@ from module_management.module_component import ModuleComponent
 
 class ModuleImporter:
 
-    component_dir = 'components'
+    component_dir = '/home/michael/Projects/Mindblocks/components'
 
     def import_modules(self):
         modules = []
 
         for module_path in self.get_category_folders():
-            manifest = self.load_manifest(module_path)
+            manifest = self.load_package_manifest(module_path)
             module = Module(manifest)
             self.add_components(module)
             self.fill_components(module)
@@ -32,8 +32,9 @@ class ModuleImporter:
     def get_category_folders(self):
         all_subitems = os.listdir(self.component_dir)
         filtered_subitems = [item for item in all_subitems if self.filter_name(item)]
+
         absolute_subitems = [(d,os.path.join(self.component_dir, d)) for d in filtered_subitems]
-        subfolders = [d[1] for d in absolute_subitems if os.path.isdir(d[1])]
+        subfolders = [d[0] for d in absolute_subitems if os.path.isdir(d[1])]
 
         return subfolders
 
@@ -48,6 +49,7 @@ class ModuleImporter:
 
             for component_manifest in file_manifest['components']:
                 component_manifest['file_path'] = class_path
+                component_manifest['package'] = module.manifest['package']
                 component_class = getattr(loaded_file, component_manifest['name'])
                 module.add_component(ModuleComponent(component_manifest, component_class))
 
@@ -81,3 +83,17 @@ class ModuleImporter:
             manifest = json.load(data_file)
             manifest['path'] = path
             return manifest
+
+    def load_package_manifest(self, package_name):
+        manifest_path = os.path.join(self.component_dir, package_name)
+        manifest = self.load_manifest(manifest_path)
+        manifest['package'] = package_name
+        return manifest
+
+    def load_package_module(self, package_name):
+        manifest = self.load_package_manifest(package_name)
+
+        module = Module(manifest)
+        self.add_components(module)
+        self.fill_components(module)
+        return module

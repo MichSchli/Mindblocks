@@ -12,6 +12,8 @@ from interface.other.toolbox import Toolbox
 from interface.selection import Selection
 from module_management.module_importer import ModuleImporter
 from module_management.module_manager import ModuleManager
+from persistence.graph_saver import GraphSaver
+from persistence.view_saver import ViewSaver
 from views.view import View
 
 
@@ -34,10 +36,9 @@ class Interface(tk.Tk):
         self.initialize_component_selection()
         self.initialize_canvas_selection()
 
-        return
+        self.graph_saver = GraphSaver()
+        self.view_saver = ViewSaver(self.graph_saver)
 
-
-        self.layout()
 
     def make_support_frames(self):
         self.left_frame = tk.Frame(self, background="blue")
@@ -90,6 +91,10 @@ class Interface(tk.Tk):
         c.compile(graph, "out.py")
 
         print("done")
+
+    def save(self):
+        for line in self.view_saver.process(self.agent_view.view):
+            print(line)
 
         
     def add_views(self):

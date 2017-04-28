@@ -30,8 +30,11 @@ class Graph(Identifiable):
         u.add_edge_out(edge)
         v.add_edge_in(edge)
 
+        return edge
+
     def add_vertex(self, v):
         self.vertices.append(v)
+
 
     def merge_and_link(self, u, v):
         if self == u.get_graph() and not self == v.get_graph():
@@ -39,7 +42,7 @@ class Graph(Identifiable):
         elif self == v.get_graph() and not self == u.get_graph():
             self.merge(u.get_graph())
 
-        self.add_edge(u,v)
+        return self.add_edge(u,v)
 
     def merge(self, other):
         for vertex in other.get_vertices():

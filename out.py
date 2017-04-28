@@ -2,8 +2,10 @@
 # Imports:
 #=================================
 
-from components.basic.constant import Constant
 from graph.graph import Graph
+from compilation.graph_runner import GraphRunner
+from components.basic.constant import Constant
+from components.experiment_io.console_printer import ConsolePrinter
 
 #=================================
 # Arguments:
@@ -16,7 +18,6 @@ from graph.graph import Graph
 
 graph = Graph()
 
-manifest = {'file_path': 'components.basic.constant', 'name': 'Constant', 'languages': ['python', 'theano'], 'views': ['experiment']}
+manifest = {'name': 'Constant', 'languages': ['theano', 'python'], 'views': ['agent', 'experiment'], 'file_path': 'components.basic.constant'}
 Constant_0 = Constant(manifest=manifest)
 graph.merge(Constant_0.get_graph())
-Constant_0.attributes = {'value': '0'}

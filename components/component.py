@@ -33,7 +33,7 @@ class Component(Vertex, UIComponent, Identifiable):
     links_in = []
     links_out = []
     source_string = None
-    attributes = {}
+    default_attributes = {}
     chosen_language = None
 
     def __init__(self, manifest=None, identifier=None, create_graph=True):
@@ -49,6 +49,8 @@ class Component(Vertex, UIComponent, Identifiable):
             self.create_links()
         else:
             Identifiable.__init__(self, name=self.name)
+
+        self.attributes = self.default_attributes
 
     def create_links(self):
         for description in self.links_in:
