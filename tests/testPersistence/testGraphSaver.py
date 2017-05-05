@@ -46,7 +46,7 @@ class GraphSaverTest(unittest.TestCase):
         self.assertEqual("\t\t<component name=v1>", lines[1])
         self.assertEqual("\t\t</component>", lines[2])
         self.assertEqual("\t\t<component name=v2>", lines[3])
-        self.assertEqual("\t\t</component>", lines[5])
+        self.assertEqual("\t\t</component>", lines[4])
 
     def testYieldsVertexAttributes(self):
         v1 = Vertex()
@@ -95,30 +95,42 @@ class GraphSaverTest(unittest.TestCase):
         self.assertEqual("\t\t</component>", lines[-2])
 
 
-    def testYieldsLinks(self):
-        v1 = Vertex()
-        v2 = Vertex()
-        edge = v1.add_edge(v2)
-        graph = v1.get_graph()
-        v1.unique_identifier = "v1"
-        v2.unique_identifier = "v2"
-        graph.unique_identifier = "test"
+    def testIntegrationConstantToSigmoid(self):
+        module = self.module_importer.load_package_module('basic')
+        component = module.get_component("Constant")
+        constant = component.instantiate()
 
-        edge.attributes['in_socket'] = "TestInName"
-        edge.attributes['out_socket'] = "TestOutName"
+        module2 = self.module_importer.load_package_module('nonlinearities')
+        component2 = module2.get_component("Sigmoid")
+        sigmoid = component2.instantiate()
 
-        lines = list(self.graph_saver.process(graph))
-        self.assertEqual("\t\t<component name=v1>", lines[1])
-        self.assertEqual("\t\t</component>", lines[2])
-        self.assertEqual("\t\t<component name=v2>", lines[3])
-        self.assertEqual("\t\t\t<link socket=TestInName>v1:TestOutName</link>", lines[4])
+        # Bit of a hack till we have better handling of IDs
+        constant.unique_identifier = "TestConstant"
+        sigmoid.unique_identifier = "TestSigmoid"
+
+        constant.get_out_socket_by_id(0).add_edge(sigmoid.get_in_socket_by_id(0))
+        constant_out_name = constant.get_out_socket_by_id(0).description['name']
+        sigmoid_in_name = sigmoid.get_in_socket_by_id(0).description['name']
+
+        # Change value from default to be sure
+        constant.attributes['value'] = '27'
+
+        lines = list(self.graph_saver.process(constant.get_graph()))
+
+        self.assertEqual("\t\t<component name=TestConstant>", lines[1])
+        self.assertEqual("\t\t\t<class>Constant</class>", lines[2])
+        self.assertEqual("\t\t\t<package>basic</package>", lines[3])
+        self.assertEqual("\t\t\t<attribute key=value>27</attribute>", lines[4])
         self.assertEqual("\t\t</component>", lines[5])
+        self.assertEqual("\t\t<component name=TestSigmoid>", lines[6])
+        self.assertEqual("\t\t\t<class>Sigmoid</class>", lines[7])
+        self.assertEqual("\t\t\t<package>nonlinearities</package>", lines[8])
+        self.assertEqual("\t\t\t<socket name="+sigmoid_in_name+">TestConstant:"+constant_out_name+"</socket>", lines[9])
+        self.assertEqual("\t\t</component>", lines[10])
 
+    '''
+    More tests relating specifically to component/socket implementation after refactoring
+    '''
 
-    def testLargerIntegration(self):
-        pass
-
-    def testYieldsComponentLocations(self):
-        pass
 
 

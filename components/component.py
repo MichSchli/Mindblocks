@@ -52,6 +52,11 @@ class Component(Vertex, UIComponent, Identifiable):
 
         self.attributes = self.default_attributes
 
+    def set_position(self, x, y):
+        self.attributes['x'] = str(x)
+        self.attributes['y'] = str(y)
+        UIComponent.set_position(self, x, y)
+
     def create_links(self):
         for description in self.links_in:
             link = InLink(description, self)
@@ -63,30 +68,23 @@ class Component(Vertex, UIComponent, Identifiable):
             self.add_edge(link)
             self.sub_components.append(link)
 
-    def get_attributes(self):
-        return self.attributes
+    def get_out_socket_by_id(self, id):
+        return self.get_edges_out()[id].destination
 
-    def python_init(self, arguments={}):
-        yield "manifest = "+str(self.manifest)
-        yield self.get_unique_identifier() + " = " +  self.__class__.__name__ + "(manifest=manifest)"
-        yield arguments['name'] + ".merge(" + self.get_unique_identifier() + ".get_graph())"
-        if self.attributes != {}:
-            yield self.get_unique_identifier() + ".attributes = " + str(self.attributes)
-        for enumerator, in_edge in enumerate(self.edges_in):
-            yield in_edge.origin.get_unique_identifier() + " = " + self.get_unique_identifier() + ".edges_in[" + str(enumerator) + "].origin"
-        for enumerator, out_edge in enumerate(self.edges_out):
-            yield out_edge.destination.get_unique_identifier() + " = " + self.get_unique_identifier() + ".edges_out[" + str(enumerator) + "].destination"
+    def get_in_socket_by_id(self, id):
+        return self.get_edges_in()[id].origin
 
-        for in_edge in self.edges_in:
-            in_link = in_edge.origin
-            for x in in_link.edges_in:
-                yield arguments['name'] + ".add_edge(" + x.origin.get_name() + ", " + in_link.get_name() + ")"
-        yield ""
+    def get_out_socket_by_name(self, name):
+        for edge in self.get_edges_out():
+            if edge.destination.description['name'] == name:
+                return edge.destination
+        return None
 
-    def get_python_import(self):
-        yield "from " + self.module + " import " + self.__class__.__name__
-
-
+    def get_in_socket_by_name(self, name):
+        for edge in self.get_edges_in():
+            if edge.origin.description['name'] == name:
+                return edge.origin
+        return None
 
 class Link(Vertex, UIComponent):
 
@@ -96,15 +94,19 @@ class Link(Vertex, UIComponent):
         self.description = description
         self.parent = parent
 
-        self.name = parent.get_name() + '_' + description['name']
-
         Vertex.__init__(self, name=self.name)
 
         if description is not None:
             UIComponent.__init__(self)
 
+    def get_unique_identifier(self):
+        return self.parent.get_unique_identifier() + ':' + self.description['name']
+
     def get_graphic(self):
         return None
+
+    def is_socket(self):
+        return True
 
     def calculate_position_from_parent(self):
         #TODO this is shit

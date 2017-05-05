@@ -5,6 +5,9 @@ from persistence.XmlProducer import XmlProducer
 class GraphSaver(Visitor, XmlProducer):
 
     def __process_vertex__(self, vertex, arguments={}):
+        if vertex.is_socket():
+            return
+
         name = vertex.get_unique_identifier()
         yield self.get_header("component", {"name":name}, indentation=2)
 
@@ -16,8 +19,15 @@ class GraphSaver(Visitor, XmlProducer):
             yield self.get_header("attribute", {"key":attribute}, indentation=3) + vertex.attributes[attribute] + self.get_footer("attribute")
 
         for edge in vertex.get_edges_in():
-            sender_name = edge.get_origin().get_unique_identifier() + ":" + edge.get_out_socket_name()
-            yield self.get_header("link", {"socket" : edge.get_in_socket_name()}, indentation=3) + sender_name + self.get_footer("link")
+            in_socket = edge.get_origin()
+            if in_socket.is_socket():
+                out_socket_names = [e.origin.get_unique_identifier() for e in in_socket.get_edges_in()]
+                if out_socket_names:
+                    in_socket_name = in_socket.description['name']
+                    socket_string = self.get_header("socket", {"name": in_socket_name}, indentation=3)
+                    socket_string += ",".join(out_socket_names)
+                    socket_string += self.get_footer("socket")
+                    yield socket_string
 
         yield self.get_footer("component", indentation=2)
 

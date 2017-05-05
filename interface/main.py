@@ -96,6 +96,9 @@ class Interface(tk.Tk):
         for line in self.view_saver.process(self.agent_view.view):
             print(line)
 
+    def load(self):
+        pass
+
         
     def add_views(self):
         self.note = ttk.Notebook(self.left_frame)

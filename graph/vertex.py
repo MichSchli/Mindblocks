@@ -6,12 +6,18 @@ class Vertex(Identifiable):
     attributes = None
     manifest = None
 
+    def is_socket(self):
+        return False
+
     def __init__(self, name="vertex"):
         Identifiable.__init__(self, name=name)
         self.edges_out = []
         self.edges_in = []
         self.initialize_graph()
         self.attributes = {}
+
+    def get_attributes(self):
+        return self.attributes
 
     def parse_attributes(self):
         return True

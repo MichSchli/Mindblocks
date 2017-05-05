@@ -57,6 +57,12 @@ class Graph(Identifiable):
     def get_vertices(self):
         return self.vertices
 
+    def get_vertex_by_name(self, name):
+        for vertex in self.vertices:
+            if vertex.get_unique_identifier() == name:
+                return vertex
+        return None
+
     def get_edges(self):
         return self.edges
 
