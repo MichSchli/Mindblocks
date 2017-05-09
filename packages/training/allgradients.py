@@ -1,14 +1,14 @@
 import theano.tensor as T
 
-from components.component import Component
+from components.abstract_component import Component
 
 
 class AllGradients(Component):
     name = "AllGradients"
-    links_out = [{'position': [0, -20],
+    default_out_sockets = [{'position': [0, -20],
                   'name': 'Output'}
-                 ]
-    links_in = [{'position': [0, 20],
+                           ]
+    default_in_sockets = [{'position': [0, 20],
                  'name': 'Function'}]
 
     def compile_theano(self):

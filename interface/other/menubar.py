@@ -9,7 +9,7 @@ class Menubar(tk.Menu):
                  ("New", self.placeholder),
                  ("Save", self.save),
                  ("Save View", self.placeholder),
-                 ("Load", self.placeholder),
+                 ("Load", self.load),
                  ("Load View", self.placeholder),
                  ("Exit", self.quit_f)
              ]

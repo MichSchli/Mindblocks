@@ -7,12 +7,15 @@ from graph_runners.python_graph_runner import GraphRunner
 from identifiables.identifierFactory import IdentifierFactory
 from interface.drawable_canvas import DrawableCanvas
 from interface.other.description_panel import DescriptionPanel
+from interface.other.file_interface import FileInterface
 from interface.other.menubar import Menubar
 from interface.other.toolbox import Toolbox
 from interface.selection import Selection
 from module_management.module_importer import ModuleImporter
 from module_management.module_manager import ModuleManager
+from persistence.graph_loader import GraphLoader
 from persistence.graph_saver import GraphSaver
+from persistence.view_loader import ViewLoader
 from persistence.view_saver import ViewSaver
 from views.view import View
 
@@ -39,6 +42,11 @@ class Interface(tk.Tk):
         self.graph_saver = GraphSaver()
         self.view_saver = ViewSaver(self.graph_saver)
 
+        self.graph_loader = GraphLoader(self.module_importer)
+        self.view_loader = ViewLoader(self.graph_loader, self.module_manager, self.identifier_factory)
+
+        self.file_interface = FileInterface()
+
 
     def make_support_frames(self):
         self.left_frame = tk.Frame(self, background="blue")
@@ -55,22 +63,22 @@ class Interface(tk.Tk):
         self.toolbox.pack(side=tk.BOTTOM, expand=True, fill=tk.Y, pady=0, padx=0, anchor="n")
 
     def initialize_canvas_selection(self):
-        self.selected_canvas = Selection(self.agent_view)
+        self.selected_canvas = Selection(self.agent_canvas)
         self.selected_canvas.set_watcher(self.toolbox.canvas_selection_changed) 
         
         def tabChangedEvent(event):
             if event.widget.index("current") == 0:
-                self.selected_canvas.change(self.agent_view)
+                self.selected_canvas.change(self.agent_canvas)
             elif event.widget.index("current") == 1:
-                self.selected_canvas.change(self.experiment_view)
+                self.selected_canvas.change(self.experiment_canvas)
                         
         self.note.bind_all("<<NotebookTabChanged>>", tabChangedEvent)
 
     def initialize_component_selection(self):
         self.selected_component = Selection(None, properties = {'is_toolbox':False})
 
-        self.agent_view.selected_component = self.selected_component
-        self.experiment_view.selected_component = self.selected_component
+        self.agent_canvas.selected_ui_element = self.selected_component
+        self.experiment_canvas.selected_ui_element = self.selected_component
 
         self.toolbox.selected_component = self.selected_component
         self.description_panel.selected_component = self.selected_component
@@ -79,13 +87,13 @@ class Interface(tk.Tk):
         
 
     def predict_selection(self):
-        graph = self.experiment_view.get_selected_graph()
+        graph = self.experiment_canvas.get_selected_graph()
         runner = GraphRunner()
         print(runner.run(graph, {}))
 
     def compile_selection(self):
         print("Compiling functions...")
-        graph = self.experiment_view.get_selected_graph()
+        graph = self.experiment_canvas.get_selected_graph()
 
         c = Compiler(GraphCompiler())
         c.compile(graph, "out.py")
@@ -93,29 +101,35 @@ class Interface(tk.Tk):
         print("done")
 
     def save(self):
-        for line in self.view_saver.process(self.agent_view.view):
-            print(line)
+        outfile = self.file_interface.save_as_file()
+        for line in self.view_saver.process(self.agent_canvas.view):
+            print(line, file=outfile)
 
     def load(self):
-        pass
+        infile = self.file_interface.load_file()
+        str_rep = infile.read()
 
-        
+        new_view = self.view_loader.load_next_view(str_rep)
+
+        if new_view.name == "agent":
+            self.agent_canvas.replace_view(new_view)
+
     def add_views(self):
         self.note = ttk.Notebook(self.left_frame)
 
-        module_importer = ModuleImporter()
-        module_manager = ModuleManager(module_importer)
-        identifier_factory = IdentifierFactory()
+        self.module_importer = ModuleImporter()
+        self.module_manager = ModuleManager(self.module_importer)
+        self.identifier_factory = IdentifierFactory()
 
         #TODO: Awaiting tests, refactor
-        actual_agent_view = View("agent", module_manager, identifier_factory)
-        actual_experiment_view = View("experiment", module_manager, identifier_factory)
+        actual_agent_view = View("agent", self.module_manager, self.identifier_factory)
+        actual_experiment_view = View("experiment", self.module_manager, self.identifier_factory)
         
-        self.agent_view = DrawableCanvas(self.note, actual_agent_view)
-        self.experiment_view = DrawableCanvas(self.note, actual_experiment_view)
+        self.agent_canvas = DrawableCanvas(self.note, actual_agent_view)
+        self.experiment_canvas = DrawableCanvas(self.note, actual_experiment_view)
 
-        self.note.add(self.agent_view, text="Agents")
-        self.note.add(self.experiment_view, text="Experiment")
+        self.note.add(self.agent_canvas, text="Agents")
+        self.note.add(self.experiment_canvas, text="Experiment")
         
         self.note.pack(side=tk.LEFT, expand=True, fill=tk.BOTH, anchor="nw")
 

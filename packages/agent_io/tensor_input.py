@@ -1,4 +1,4 @@
-from components.component import Component
+from components.abstract_component import Component
 import theano
 import numpy as np
 from assorted.GraphInput import GraphInput
@@ -6,7 +6,7 @@ from assorted.GraphInput import GraphInput
 class TensorInput(Component):
 
     name = "TensorInput"
-    links_out = [{'position': [0,-20],
+    default_out_sockets = [{'position': [0, -20],
                  'name': 'Output'}]
 
     attributes = {'dimension': '1'}

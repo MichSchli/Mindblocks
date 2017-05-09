@@ -39,11 +39,14 @@ class View:
 
     def instantiate(self, module_component):
         component = module_component.instantiate()
+        component.create_sockets()
         self.identifier_factory.assign_identifier(component)
         self.identifier_factory.assign_identifier(component.get_graph())
         self.append_graph(component.get_graph())
         return component
 
     def create_edge(self, out_vertex, in_vertex):
-        self.remove_graph(in_vertex.get_graph())
+        if out_vertex.get_graph() != in_vertex.get_graph():
+            self.remove_graph(in_vertex.get_graph())
+
         out_vertex.add_edge(in_vertex)

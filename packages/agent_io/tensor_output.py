@@ -1,9 +1,9 @@
-from components.component import Component
+from components.abstract_component import Component
 
 class TensorOutput(Component):
 
     name = "TensorOutput"
-    links_in = [{'position': [0,20],
+    default_in_sockets = [{'position': [0, 20],
                  'name': 'Input'}]
 
     attributes = {}

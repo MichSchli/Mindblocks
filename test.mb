@@ -1,0 +1,24 @@
+<view name=agent>
+	<graph name=graph_0>
+		<component name=Dot_0>
+			<class>Dot</class>
+			<package>math</package>
+			<attribute key=x>307</attribute>
+			<attribute key=y>277</attribute>
+		</component>
+		<component name=Dot_1>
+			<class>Dot</class>
+			<package>math</package>
+			<attribute key=x>400</attribute>
+			<attribute key=y>124</attribute>
+			<socket name=Left>Dot_0:Output</socket>
+		</component>
+		<component name=Dot_0>
+			<class>Dot</class>
+			<package>math</package>
+			<attribute key=x>105</attribute>
+			<attribute key=y>152</attribute>
+			<socket name=Right>Dot_0:Output</socket>
+		</component>
+	</graph>
+</view>

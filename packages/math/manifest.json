@@ -11,6 +11,14 @@
                "name": "Dot"
             }
          ]
+      },
+      {
+         "name": "elemwise_add.py",
+         "components": [
+            {
+               "name": "Add"
+            }
+         ]
       }
    ]
 }

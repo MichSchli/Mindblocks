@@ -1,6 +1,5 @@
-from components.graph.subgraph_component import SubgraphComponent
 from module_management.module import Module
-from module_management.module_component import ModuleComponent, GraphModuleComponent
+from module_management.module_component import GraphModuleComponent
 
 
 class ModuleManager:

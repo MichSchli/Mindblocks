@@ -9,7 +9,7 @@ from module_management.module_component import ModuleComponent
 
 class ModuleImporter:
 
-    component_dir = '/home/michael/Projects/Mindblocks/components'
+    component_dir = '/home/michael/Projects/Mindblocks/packages'
 
     def import_modules(self):
         modules = []

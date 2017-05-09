@@ -1,11 +1,11 @@
 import numpy as np
 import theano
-from components.component import Component
+from components.abstract_component import Component
 
 
 class Constant(Component):
     name = "Constant"
-    links_out = [{'position': [0, -20],
+    default_out_sockets = [{'position': [0, -20],
                   'name': 'Output'}]
 
     default_attributes = {'value': '0'}

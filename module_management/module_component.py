@@ -1,4 +1,5 @@
-from components.graph.subgraph_component import SubgraphComponent
+from packages.graph.subgraph_component import SubgraphComponent
+from interface.graphics.graphic import PlaceholderGraphic
 
 class ModuleComponent:
 
@@ -8,7 +9,11 @@ class ModuleComponent:
         self.component_class.module = manifest['file_path']
 
     def instantiate(self, identifier=None):
-        return self.component_class(manifest=self.manifest, identifier=identifier)
+        return self.component_class(manifest=self.manifest, identifier=identifier, module=self)
+
+    def instantiate_graphic(self):
+        if 'graphic' not in self.manifest:
+            return PlaceholderGraphic(self.get_unique_identifier())
 
     def get_name(self):
         return self.manifest['name']

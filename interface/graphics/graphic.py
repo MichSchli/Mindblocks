@@ -61,16 +61,6 @@ class PlaceholderGraphic(Graphic):
 class LinkBall(Graphic):
 
     link_radius = 6
-    
-    def __init__(self, parent_graphic, parent_vector):
-        self.parent_graphic = parent_graphic
-        self.parent_vector = parent_vector
-
-    def draw_from_parent(self, canvas):
-        vector = np.array(self.parent_vector)
-        scaled_vector = self.link_radius * vector / np.linalg.norm(vector)
-        position = self.parent_graphic.center + vector + scaled_vector
-        self.draw(canvas, position)
         
     def draw(self, canvas, position, fit_to_size=None):
         self.center = position
@@ -84,12 +74,15 @@ class LinkBall(Graphic):
 
 class EdgeLine(Graphic):
 
-    def __init__(self, out_graphic, in_graphic):
-        self.out_graphic = out_graphic
-        self.in_graphic = in_graphic
+    def __init__(self, out_socket, in_socket):
+        self.out_socket = out_socket
+        self.in_socket = in_socket
 
-    def draw(self, canvas, position):
-        canvas.create_line(self.out_graphic.center[0], self.out_graphic.center[1], self.in_graphic.center[0], self.in_graphic.center[1])
+    def draw(self, canvas):
+        canvas.create_line(self.out_socket.get_position()[0],
+                           self.out_socket.get_position()[1],
+                           self.in_socket.get_position()[0],
+                           self.in_socket.get_position()[1])
 
     # TODO
     def contains_position(self, position):

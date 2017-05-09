@@ -2,13 +2,13 @@ import numpy as np
 
 import theano
 
-from components.component import Component
+from components.abstract_component import Component
 
 
 class SGD(Component):
 
     name='SGD'
-    links_in = [{'position': [0, 20],
+    default_in_sockets = [{'position': [0, 20],
                  'name': 'Gradient'}]
     attributes = {'learning rate': '0.1'}
 

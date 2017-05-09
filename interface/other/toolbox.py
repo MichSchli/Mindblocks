@@ -173,7 +173,7 @@ class ComponentSlice():
         x_center = x + 50
         y_center = y + 50
 
-        self.component.instantiate().graphic.draw(self.canvas, (x_center, y_center), fit_to_size=(x_max_size, y_max_size))
+        self.component.instantiate_graphic().draw(self.canvas, (x_center, y_center), fit_to_size=(x_max_size, y_max_size))
 
     def click(self, x, y):
         self.canvas.parent.clicked(self.component)

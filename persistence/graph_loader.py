@@ -1,6 +1,8 @@
 from graph.graph import Graph
+from persistence.XmlReader import XmlReader
 
-class GraphLoader:
+
+class GraphLoader(XmlReader):
 
     def __init__(self, module_importer):
         self.module_importer = module_importer
@@ -27,10 +29,10 @@ class GraphLoader:
 
                 source_socket.add_edge(target_socket)
 
-
             symbol, attributes, _ = self.pop_symbol(lines, start_index=next_index)
 
-        return graph
+        symbol, attributes, next_index = self.pop_symbol(lines, start_index=next_index)
+        return graph, next_index
 
     def load_next_component(self, lines, start_index=0):
         symbol, attributes, next_index = self.pop_symbol(lines, start_index=start_index)
@@ -58,31 +60,11 @@ class GraphLoader:
         module = self.module_importer.load_package_module(package_symbol)
         module_component = module.get_component(class_symbol)
         component = module_component.instantiate()
+        component.create_sockets()
 
-        for k,v in component_attributes.items():
-            component.attributes[k] = v
+        component.update_attributes(component_attributes)
 
         component.set_unique_identifier(name)
 
         return component, edges, next_index
 
-    # Temporary
-    def pop_symbol(self, lines, expect_value=False, start_index=0):
-        scanner = start_index
-        if expect_value:
-            while lines[scanner] != "<":
-                scanner += 1
-            symbol = lines[start_index:scanner].strip()
-            return symbol, [], scanner
-        else:
-            while lines[scanner] != ">":
-                scanner += 1
-            scanner += 1
-            symbol = lines[start_index:scanner].strip()
-
-        parts = symbol[1:-1].split(' ')
-
-        name = parts[0]
-        attributes = dict([tuple(att.split("=")) for att in parts[1:]])
-
-        return name, attributes, scanner

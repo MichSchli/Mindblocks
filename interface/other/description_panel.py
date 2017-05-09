@@ -16,8 +16,8 @@ class DescriptionPanel(tk.Frame):
         self.box.pack(side=tk.TOP, expand=False, fill=tk.BOTH, pady=0, padx=0, anchor="ne")
 
     def component_selection_changed(self, selection):
-        self.title.change(selection.get())
-        self.box.change(selection.get())
+        self.title.change(selection.get(), selection.properties)
+        self.box.change(selection.get(), selection.properties)
 
 
 class DescriptionTitle(tk.Frame):
@@ -32,11 +32,13 @@ class DescriptionTitle(tk.Frame):
         self.label.pack()
         #self.text.pack(side=tk.TOP, expand=False, fill=tk.X)
 
-    def change(self, component):
-        if component is None:
+    def change(self, ui_element, properties):
+        if ui_element is None:
             title = "<No selection>"
+        elif not properties['is_toolbox']:
+            title = ui_element.component.get_unique_identifier()
         else:
-            title = component.get_unique_identifier()
+            title = ui_element.get_unique_identifier()
 
         if len(title) > self.max_length:
             title = title[:self.max_length]+"..."
@@ -85,9 +87,15 @@ class DescriptionBox(tk.Frame):
     def parse_field(self, string):
         return string
 
-    def change(self, component):
-        self.component = component
+    def change(self, ui_element, properties):
         self.text_field.delete(1.0, tk.END)
+        if ui_element is None:
+            return
+        elif not properties['is_toolbox']:
+            component = ui_element.component
+        else:
+            component = ui_element
+
         if component is not None:
             for attribute in component.get_attributes():
                 self.text_field.insert(tk.END, attribute+"="+str(component.get_attributes()[attribute])+'\n')

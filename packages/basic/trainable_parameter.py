@@ -1,12 +1,12 @@
 import numpy as np
 import theano
 
-from components.component import Component
+from components.abstract_component import Component
 
 
 class TrainableParameter(Component):
     name = "Parameter"
-    links_out = [{'position': [0, -20],
+    default_out_sockets = [{'position': [0, -20],
                   'name': 'Output'}]
 
     attributes = {'dimension': '1',

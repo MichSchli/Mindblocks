@@ -1,13 +1,13 @@
 from compilation.graph_compiler import GraphCompiler
-from components.component import Component
+from components.abstract_component import Component
 from graph_runners.python_graph_runner import GraphRunner
 from graph_runners.theano_graph_runner import TheanoGraphRunner
 
 
 class SubgraphComponent(Component):
     name = "Subgraph"
-    links_out = []
-    links_in = []
+    default_out_sockets = []
+    default_in_sockets = []
 
     def python_init(self, arguments={}):
         # Define the subgraph

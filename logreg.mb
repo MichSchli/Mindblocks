@@ -1,0 +1,52 @@
+<view name=agent>
+	<graph name=graph_6>
+		<component name=TensorInput_0>
+			<class>TensorInput</class>
+			<package>agent_io</package>
+			<attribute key=y>387</attribute>
+			<attribute key=x>131</attribute>
+		</component>
+		<component name=TrainableParameter_0>
+			<class>TrainableParameter</class>
+			<package>basic</package>
+			<attribute key=y>382</attribute>
+			<attribute key=x>315</attribute>
+		</component>
+		<component name=Dot_0>
+			<class>Dot</class>
+			<package>math</package>
+			<attribute key=y>280</attribute>
+			<attribute key=x>237</attribute>
+			<socket name=Left>TensorInput_0:Output</socket>
+			<socket name=Right>TrainableParameter_0:Output</socket>
+		</component>
+		<component name=TrainableParameter_1>
+			<class>TrainableParameter</class>
+			<package>basic</package>
+			<attribute key=y>376</attribute>
+			<attribute key=x>446</attribute>
+		</component>
+		<component name=Add_0>
+			<class>Add</class>
+			<package>math</package>
+			<attribute key=y>185</attribute>
+			<attribute key=x>298</attribute>
+			<socket name=Left>Dot_0:Output</socket>
+			<socket name=Right>TrainableParameter_1:Output</socket>
+		</component>
+		<component name=Sigmoid_0>
+			<class>Sigmoid</class>
+			<package>nonlinearities</package>
+			<attribute key=y>84</attribute>
+			<attribute key=x>297</attribute>
+			<socket name=Input>Add_0:Output</socket>
+		</component>
+		<component name=TensorOutput_0>
+			<class>TensorOutput</class>
+			<package>agent_io</package>
+			<attribute key=y>47</attribute>
+			<attribute key=x>117</attribute>
+			<socket name=Input>Sigmoid_0:Output</socket>
+		</component>
+	</graph>
+</view>

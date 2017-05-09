@@ -1,12 +1,8 @@
 import unittest
-from unittest.mock import MagicMock as Mock
-from unittest.mock import call
 
-from components.basic.constant import Constant
+from graph.vertex import Vertex
 from module_management.module_importer import ModuleImporter
 from persistence.graph_saver import GraphSaver
-from graph.graph import Graph
-from graph.vertex import Vertex
 
 
 class GraphSaverTest(unittest.TestCase):
@@ -99,10 +95,12 @@ class GraphSaverTest(unittest.TestCase):
         module = self.module_importer.load_package_module('basic')
         component = module.get_component("Constant")
         constant = component.instantiate()
+        constant.create_sockets()
 
         module2 = self.module_importer.load_package_module('nonlinearities')
         component2 = module2.get_component("Sigmoid")
         sigmoid = component2.instantiate()
+        sigmoid.create_sockets()
 
         # Bit of a hack till we have better handling of IDs
         constant.unique_identifier = "TestConstant"

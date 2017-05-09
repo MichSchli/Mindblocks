@@ -12,21 +12,30 @@ class GraphSaverTest(unittest.TestCase):
     def tearDown(self):
         self.graph_saver = None
 
-
     def testLoadEmptyGraph(self):
         lines = "<graph name=TestGraph>" \
                 + "</graph>"
 
-        graph = self.graph_loader.load_next_graph(lines)
+        graph, _ = self.graph_loader.load_next_graph(lines)
 
         self.assertEqual("TestGraph", graph.get_unique_identifier())
         self.assertEqual(0, len(graph.get_vertices()))
+
+    def testLoadEmptyGraphCountCorrect(self):
+        lines = "<graph name=TestGraph>" \
+                + "</graph>"
+
+        charcount = len(lines)
+
+        graph, count = self.graph_loader.load_next_graph(lines)
+
+        self.assertEqual(charcount, count)
 
     def testLoadEmptyGraphWithWeirdWhitespace(self):
         lines = "<graph name=TestGraph>\t\t\n" \
                 + "\n   </graph>\t"
 
-        graph = self.graph_loader.load_next_graph(lines)
+        graph, _ = self.graph_loader.load_next_graph(lines)
 
         self.assertEqual("TestGraph", graph.get_unique_identifier())
         self.assertEqual(0, len(graph.get_vertices()))
@@ -39,7 +48,7 @@ class GraphSaverTest(unittest.TestCase):
                 + "</component>"\
                 + "</graph>"
 
-        graph = self.graph_loader.load_next_graph(lines)
+        graph, _ = self.graph_loader.load_next_graph(lines)
 
         self.assertEqual(2, len(graph.get_vertices()))
 
@@ -56,7 +65,7 @@ class GraphSaverTest(unittest.TestCase):
                 + "</component>"\
                 + "</graph>"
 
-        graph = self.graph_loader.load_next_graph(lines)
+        graph, _ = self.graph_loader.load_next_graph(lines)
         constant = graph.get_vertices()[0]
 
         self.assertEqual("27", constant.get_attributes()['value'])
@@ -70,7 +79,7 @@ class GraphSaverTest(unittest.TestCase):
                 + "</component>"\
                 + "</graph>"
 
-        graph = self.graph_loader.load_next_graph(lines)
+        graph, _ = self.graph_loader.load_next_graph(lines)
         constant = graph.get_vertices()[0]
 
         self.assertTrue("xyz" in constant.get_attributes())
@@ -88,7 +97,7 @@ class GraphSaverTest(unittest.TestCase):
                 + "</component>"\
                 + "</graph>"
 
-        graph = self.graph_loader.load_next_graph(lines)
+        graph, _ = self.graph_loader.load_next_graph(lines)
 
         self.assertEqual(5, len(graph.get_vertices()))
 
@@ -114,7 +123,7 @@ class GraphSaverTest(unittest.TestCase):
                 + "</component>"\
                 + "</graph>"
 
-        graph = self.graph_loader.load_next_graph(lines)
+        graph, _ = self.graph_loader.load_next_graph(lines)
 
         self.assertEqual(5, len(graph.get_vertices()))
 

@@ -2,12 +2,12 @@ import theano.tensor as T
 import numpy as np
 
 from assorted.GraphInput import GraphInput
-from components.component import Component
+from components.abstract_component import Component
 
 
 class CsvInput(Component):
     name = "CsvInput"
-    links_out = [{'position': [0, -20],
+    default_out_sockets = [{'position': [0, -20],
                   'name': 'Output'}]
 
     attributes = {'path': '<argument>',
