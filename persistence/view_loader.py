@@ -14,6 +14,7 @@ class ViewLoader(XmlReader):
         name = attributes["name"]
 
         view = View(name, self.module_manager, self.identifier_factory)
+        self.module_manager.register_view(view)
 
         symbol, attributes, _ = self.pop_symbol(lines, start_index=next_index)
         while symbol != "/view":
@@ -21,6 +22,17 @@ class ViewLoader(XmlReader):
             view.append_graph(graph)
             symbol, attributes, _ = self.pop_symbol(lines, start_index=next_index)
 
-        return view
+        symbol, attributes, next_index = self.pop_symbol(lines, start_index=next_index)
+        return view, next_index
+
+    def load_views(self, lines):
+        views = []
+        index = 0
+        while len(lines) > index:
+            view, index = self.load_next_view(lines, start_index=index)
+            views.append(view)
+
+        return views
+
 
 

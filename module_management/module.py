@@ -10,7 +10,7 @@ class Module:
     def get_filtered_copy(self, view=None):
         copy = Module(manifest=self.manifest)
         for component in self.components:
-            if view is None or view in component.manifest['views']:
+            if True: #view is None or view in component.manifest['views']:
                 copy.add_component(component)
         return copy
 

@@ -62,23 +62,23 @@ class SubgraphComponent(Component):
 
         available_space = 80
 
-        self.links_in = []
-        self.links_out = []
+        self.default_in_sockets = []
+        self.default_out_sockets = []
 
         if len(self.inputs) > 0:
             input_spacing = available_space/(len(self.inputs))
             for i,inp in enumerate(self.inputs):
-                self.links_in.append({'position': [-40 + int((i+0.5) * input_spacing), 20],
+                self.default_in_sockets.append({'position': [-40 + int((i+0.5) * input_spacing), 20],
                                       'name': inp})
 
         if len(self.outputs) > 0:
             output_spacing = available_space/(len(self.outputs))
             for i,oup in enumerate(self.outputs):
-                self.links_out.append({'position': [-40 + int((i+0.5) * output_spacing), -20],
+                self.default_out_sockets.append({'position': [-40 + int((i+0.5) * output_spacing), -20],
                                       'name': oup})
 
 
-        Component.__init__(self, manifest=manifest, identifier=identifier, create_graph=create_graph)
+        Component.__init__(self, manifest=manifest, identifier=identifier)
 
 
     def copy(self, identifier=None):

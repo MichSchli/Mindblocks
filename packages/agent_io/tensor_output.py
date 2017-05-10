@@ -6,7 +6,7 @@ class TensorOutput(Component):
     default_in_sockets = [{'position': [0, 20],
                  'name': 'Input'}]
 
-    attributes = {}
+    default_attributes = {}
 
     def theano_outputs(self):
         to_be_output = self.pull_by_index(0)

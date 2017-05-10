@@ -10,7 +10,7 @@ class CsvInput(Component):
     default_out_sockets = [{'position': [0, -20],
                   'name': 'Output'}]
 
-    attributes = {'path': '<argument>',
+    default_attributes = {'path': '<argument>',
                   'n_columns': '3',
                   'separator': ','}
 

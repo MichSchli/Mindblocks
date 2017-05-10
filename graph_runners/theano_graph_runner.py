@@ -53,6 +53,7 @@ class TheanoGraphRunner(Visitor):
             self.theano_function = theano.function(inputs=theano_inputs, outputs=theano_outputs, updates=theano_updates)
 
         input_list = self.input_list_from_dictionary(input_dictionary)
+        print(input_list)
         output_list = self.theano_function(input_list)
 
         return self.output_dictionary_from_list(output_list)

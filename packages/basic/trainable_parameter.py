@@ -9,7 +9,7 @@ class TrainableParameter(Component):
     default_out_sockets = [{'position': [0, -20],
                   'name': 'Output'}]
 
-    attributes = {'dimension': '1',
+    default_attributes = {'dimension': '1',
                   'initialization': 'normal(0,0.1)'}
 
     parsed_attributes = None

@@ -15,15 +15,18 @@ class Component(Vertex, Identifiable):
     chosen_language = None
     position = None
 
+    in_sockets = []
+    out_sockets = []
+
     def __init__(self, manifest=None, identifier=None, module=None):
+        Vertex.__init__(self, name=self.name)
+
         self.name = manifest['name']
         self.manifest = manifest
-
         self.chosen_language = self.manifest['languages'][0]
         self.attributes = self.default_attributes
         self.module = module
 
-        Vertex.__init__(self, name=self.name)
 
     def update_attributes(self, new_attributes):
         for k,v in new_attributes.items():

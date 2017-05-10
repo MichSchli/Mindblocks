@@ -23,13 +23,16 @@ class DrawableCanvas(tk.Canvas):
         self.selected_graph = Selection(None)
 
         self.view = view
+        self.replace_view(view)
 
     def replace_view(self, new_view):
         self.view = new_view
         self.delete("all")
         self.ui_elements = []
-        self.selected_ui_element.change(None, properties={'is_toolbox':False})
-        self.selected_graph.change(None)
+
+        if self.selected_ui_element is not None:
+            self.selected_ui_element.change(None, properties={'is_toolbox':False})
+            self.selected_graph.change(None)
 
         dic_rep = {}
 
@@ -109,7 +112,7 @@ class DrawableCanvas(tk.Canvas):
                 self.ui_elements.append(link_ui_element)
                 link_ui_element.draw(self)
 
-                self.selected_graph.change(clicked_ui_element.get_graph())
+                self.selected_graph.change(clicked_ui_element.component.get_graph())
             else:
                 self.selected_ui_element.change(clicked_ui_element, properties={'is_toolbox':False})
                 self.selected_graph.change(clicked_ui_element.component.get_graph())

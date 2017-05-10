@@ -90,12 +90,12 @@ class DescriptionBox(tk.Frame):
     def change(self, ui_element, properties):
         self.text_field.delete(1.0, tk.END)
         if ui_element is None:
-            return
+            self.component = None
         elif not properties['is_toolbox']:
-            component = ui_element.component
+            self.component = ui_element.component
         else:
-            component = ui_element
+            self.component = ui_element
 
-        if component is not None:
-            for attribute in component.get_attributes():
-                self.text_field.insert(tk.END, attribute+"="+str(component.get_attributes()[attribute])+'\n')
+        if self.component is not None:
+            for attribute in self.component.get_attributes():
+                self.text_field.insert(tk.END, attribute+"="+str(self.component.get_attributes()[attribute])+'\n')

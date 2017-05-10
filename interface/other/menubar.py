@@ -8,12 +8,17 @@ class Menubar(tk.Menu):
              [
                  ("New", self.placeholder),
                  ("Save", self.save),
-                 ("Save View", self.placeholder),
                  ("Load", self.load),
-                 ("Load View", self.placeholder),
                  ("Exit", self.quit_f)
              ]
             ),
+            ("View",
+             [
+                 ("Add view", self.add_view),
+                 ("Save View", self.save_view),
+                 ("Load View", self.load_view),
+             ]
+             ),
             ("Edit",
              [
                  ("Undo", self.placeholder),
@@ -50,11 +55,20 @@ class Menubar(tk.Menu):
     def placeholder(self):
         pass
 
+    def add_view(self):
+        self.root.add_view()
+
     def save(self):
-        self.root.save()
+        self.root.save_all_views()
 
     def load(self):
         self.root.load()
+
+    def load_view(self):
+        self.root.load_view()
+
+    def save_view(self):
+        self.root.save_current_view()
 
     def quit_f(self):
         self.root.quit()

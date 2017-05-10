@@ -33,7 +33,7 @@ class BasicModuleLoadTest(unittest.TestCase):
         view = View("test_view", self.mm, self.idf)
         view.load_modules()
 
-        self.mm.fetch_basic_modules.assert_called_with(view="test_view")
+        self.mm.fetch_basic_modules.assert_called_with("test_view")
         self.assertEqual(len(view.get_available_modules()), 2)
         self.assertEqual(view.get_available_modules()[0], self.mock_module_1)
         self.assertEqual(view.get_available_modules()[1], self.mock_module_2)

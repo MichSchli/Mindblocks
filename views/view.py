@@ -1,3 +1,4 @@
+from identifiables.identifiable import Identifiable
 
 
 class View:
@@ -19,9 +20,12 @@ class View:
         self.identifier_factory = identifier_factory
 
     def load_modules(self):
-        modules = self.module_manager.fetch_basic_modules(view=self.name)
-        modules.extend(self.module_manager.fetch_graph_modules(view=self.name))
+        modules = self.module_manager.fetch_basic_modules(self.name)
+        modules.extend(self.module_manager.fetch_graph_modules(self.name))
         self.available_modules = modules
+
+    def get_name(self):
+        return self.name
 
     def get_available_modules(self):
         return self.available_modules
