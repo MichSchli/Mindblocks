@@ -13,8 +13,7 @@ class ViewLoader(XmlReader):
         symbol, attributes, next_index = self.pop_symbol(lines, start_index=start_index)
         name = attributes["name"]
 
-        view = View(name, self.module_manager, self.identifier_factory)
-        self.module_manager.register_view(view)
+        view = View(name, self.identifier_factory)
 
         symbol, attributes, _ = self.pop_symbol(lines, start_index=next_index)
         while symbol != "/view":

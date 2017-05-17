@@ -1,0 +1,15 @@
+from NEW.observer.observable_dictionary import ObservableDict
+from NEW.observer.observable_list import ObservableList
+from identifiables.identifiable import Identifiable
+
+
+class CanvasModel(Identifiable):
+
+    defined_graphs = None
+
+    def __init__(self, unique_identifier):
+        self.defined_graphs = []
+        Identifiable.__init__(self, unique_identifier=unique_identifier)
+
+    def get_defined_graphs(self):
+        return self.defined_graphs

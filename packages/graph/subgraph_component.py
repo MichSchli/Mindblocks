@@ -1,7 +1,7 @@
+from graph.graph_runners.theano_graph_runner import TheanoGraphRunner
+
 from compilation.graph_compiler import GraphCompiler
 from components.abstract_component import Component
-from graph_runners.python_graph_runner import GraphRunner
-from graph_runners.theano_graph_runner import TheanoGraphRunner
 
 
 class SubgraphComponent(Component):
@@ -53,18 +53,27 @@ class SubgraphComponent(Component):
             self.push_by_index(i, output_d[self.outputs[i]])
 
 
-    def __init__(self, graph, manifest=None, identifier=None, create_graph=True):
-        self.sub_graph = graph
+    def __init__(self, manifest=None, identifier=None):
         self.graph_runner = TheanoGraphRunner()
+        Component.__init__(self, manifest=manifest, identifier=identifier)
+
+
+
+    def update_attributes(self, new_attributes):
+        Component.update_attributes(self, new_attributes)
+
+        target_view = self.attributes['target_view']
+        target_graph = self.attributes['target_graph']
+
+        self.subgraph = self.view_manager.get_graph(target_view, target_graph)
 
         self.inputs = [i[0] for i in self.sub_graph.get_inputs()]
         self.outputs = [o[0] for o in self.sub_graph.get_outputs()]
 
-        available_space = 80
-
         self.default_in_sockets = []
         self.default_out_sockets = []
 
+        available_space = 80
         if len(self.inputs) > 0:
             input_spacing = available_space/(len(self.inputs))
             for i,inp in enumerate(self.inputs):
@@ -78,7 +87,6 @@ class SubgraphComponent(Component):
                                       'name': oup})
 
 
-        Component.__init__(self, manifest=manifest, identifier=identifier)
 
 
     def copy(self, identifier=None):

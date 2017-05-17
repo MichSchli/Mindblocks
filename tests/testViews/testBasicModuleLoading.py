@@ -21,10 +21,9 @@ class BasicModuleLoadTest(unittest.TestCase):
         self.mock_module_2 = None
 
     def testInitializedProperly(self):
-        view = View("test_view", self.mm, self.idf)
+        view = View("test_view", self.idf)
 
         self.assertEqual(view.name, "test_view")
-        self.assertEqual(view.module_manager, self.mm)
         self.assertEqual(view.identifier_factory, self.idf)
         self.assertEqual(view.available_modules, [])
         self.assertEqual(view.defined_graphs, [])

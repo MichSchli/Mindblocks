@@ -9,7 +9,7 @@ from views.view import View
 class ViewSaverTest(unittest.TestCase):
 
     def setUp(self):
-        self.view = View("test", Mock(), Mock())
+        self.view = View("test", Mock())
         self.graph_saver = Mock()
         self.view_saver = ViewSaver(self.graph_saver)
 

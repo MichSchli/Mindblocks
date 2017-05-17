@@ -2,6 +2,7 @@ import unittest
 
 from graph.vertex import Vertex
 from module_management.module_importer import ModuleImporter
+from packages.graph.subgraph_component import SubgraphComponent
 from persistence.graph_saver import GraphSaver
 
 
@@ -56,6 +57,7 @@ class GraphSaverTest(unittest.TestCase):
         self.assertEqual(lines[2], "\t\t\t<attribute key=test_attribute>abc</attribute>")
         self.assertEqual(lines[3], "\t\t</component>")
 
+
     def testYieldsManifestInstructions(self):
         v1 = Vertex()
         graph = v1.get_graph()
@@ -88,6 +90,20 @@ class GraphSaverTest(unittest.TestCase):
         self.assertIn("\t\t\t<class>Constant</class>", lines[2:-2])
         self.assertIn("\t\t\t<package>basic</package>", lines[2:-2])
         self.assertIn("\t\t\t<attribute key=value>27</attribute>", lines[2:-2])
+        self.assertEqual("\t\t</component>", lines[-2])
+
+    def testSubgraphComponentYieldsSubgraph(self):
+        attributes = {'target_view': 'TestView', 'target_graph': 'TestGraph'}
+        sgc = SubgraphComponent()
+        sgc.update_attributes(attributes)
+        sgc.unique_identifier = "TestSGC"
+
+        lines = list(self.graph_saver.process(sgc.get_graph()))
+        self.assertEqual("\t\t<component name=TestSGC>", lines[1])
+        self.assertIn("\t\t\t<class>SubgraphComponent</class>", lines[2:-2])
+        self.assertIn("\t\t\t<package>graph</package>", lines[2:-2])
+        self.assertIn("\t\t\t<attribute key=target_view>TestView</attribute>", lines[2:-2])
+        self.assertIn("\t\t\t<attribute key=target_graph>TestGraph</attribute>", lines[2:-2])
         self.assertEqual("\t\t</component>", lines[-2])
 
 

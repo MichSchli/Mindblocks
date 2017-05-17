@@ -1,9 +1,8 @@
 import tkinter as tk
 
-from components.abstract_component import Link
+from NEW.observer.selection import Selection
 from components.abstract_ui_representation import UIRepresentation
 from interface.graphics.graphic import LinkBall
-from interface.selection import Selection
 
 
 class DrawableCanvas(tk.Canvas):
@@ -13,7 +12,7 @@ class DrawableCanvas(tk.Canvas):
     selected_graph = None
     selected_ui_element = None
     
-    def __init__(self, parent, view):
+    def __init__(self, parent, view, controller):
         self.x = self.y = 0
         tk.Canvas.__init__(self, parent, cursor="cross", borderwidth=4, relief='sunken')
         self.bind("<ButtonPress-1>", self.on_button_press)
@@ -24,6 +23,7 @@ class DrawableCanvas(tk.Canvas):
 
         self.view = view
         self.replace_view(view)
+        self.controller = controller
 
     def replace_view(self, new_view):
         self.view = new_view
@@ -58,10 +58,47 @@ class DrawableCanvas(tk.Canvas):
                         self.ui_elements.append(link_ui_element)
                         link_ui_element.draw(self)
 
+    def add_ui_edge(self, edge):
+        origin = edge.origin
+        destination = edge.destination
+
+        ui_origin = self.get_ui_element(origin)
+        ui_destination = self.get_ui_element(destination)
+
+        link_ui_element = ui_origin.link_to(ui_destination)
+        link_ui_element.component = edge
+        self.ui_elements.append(link_ui_element)
+        link_ui_element.draw(self)
+
+    def get_ui_element(self, model):
+        uid = model.get_unique_identifier()
+        for element in self.ui_elements:
+            if element.component.get_unique_identifier() == uid:
+                return element
+        return None
+
 
     def get_available_modules(self):
         self.view.load_modules()
         return self.view.get_available_modules()
+
+    def add_ui_component(self, component, location):
+        new_graphic = self.selected_ui_element.get().instantiate_graphic()
+        new_ui_element = UIRepresentation(component, new_graphic)
+
+        new_ui_element.set_position(location[0], location[1])
+        self.ui_elements.append(new_ui_element)
+        new_ui_element.draw(self)
+
+        sockets = component.in_sockets + component.out_sockets
+        for socket in sockets:
+            socket_graphic = LinkBall()
+            socket_ui_element = UIRepresentation(socket, socket_graphic)
+            socket_ui_element.draw(self)
+            self.ui_elements.append(socket_ui_element)
+
+        self.selected_ui_element.change(new_ui_element, properties={'is_toolbox': False})
+        self.selected_graph.change(component.get_graph())
 
     def on_button_press(self, event):
         x = event.x
@@ -70,49 +107,21 @@ class DrawableCanvas(tk.Canvas):
         clicked_ui_element = self.ui_element_at(x, y)
         
         if clicked_ui_element is None and self.selected_ui_element.properties['is_toolbox']:
-            new_component = self.view.instantiate(self.selected_ui_element.get())
-            new_graphic = self.selected_ui_element.get().instantiate_graphic()
-            new_ui_element = UIRepresentation(new_component, new_graphic)
+            module = self.selected_ui_element.get()
+            canvas = self.view
+            location = (x,y)
 
-            new_ui_element.set_position(x,y)
-            self.ui_elements.append(new_ui_element)
-            new_ui_element.draw(self)
+            self.controller.create_component_with_sockets(module, canvas, location)
 
-            sockets = new_component.in_sockets + new_component.out_sockets
-            for socket in sockets:
-                socket_graphic = LinkBall()
-                socket_ui_element = UIRepresentation(socket, socket_graphic)
-                socket_ui_element.draw(self)
-                self.ui_elements.append(socket_ui_element)
-
-            self.selected_ui_element.change(new_ui_element, properties={'is_toolbox':False})
-            self.selected_graph.change(new_component.get_graph())
         elif clicked_ui_element is None:
             self.selected_ui_element.change(None, properties={'is_toolbox':False})
             self.selected_graph.change(None)
         else:
+            print(clicked_ui_element.component.get_graph())
             if self.should_make_link(self.selected_ui_element.get(), clicked_ui_element):
-                self.view.create_edge(self.selected_ui_element.get().component, clicked_ui_element.component)
-
-                c1 = self.selected_ui_element.get()
-                c2 = clicked_ui_element
-
-                link_ui_element = c1.link_to(c2)
-                self.ui_elements.append(link_ui_element)
-                link_ui_element.draw(self)
-
-                self.selected_graph.change(clicked_ui_element.component.get_graph())
-            elif self.should_make_link(clicked_ui_element, self.selected_ui_element.get()):
-                self.view.create_edge(clicked_ui_element.component, self.selected_ui_element.get().component)
-
-                c1 = clicked_ui_element
-                c2 = self.selected_ui_element.get()
-
-                link_ui_element = c1.link_to(c2)
-                self.ui_elements.append(link_ui_element)
-                link_ui_element.draw(self)
-
-                self.selected_graph.change(clicked_ui_element.component.get_graph())
+                c1 = self.selected_ui_element.get().component
+                c2 = clicked_ui_element.component
+                self.controller.create_edge(c1, c2)
             else:
                 self.selected_ui_element.change(clicked_ui_element, properties={'is_toolbox':False})
                 self.selected_graph.change(clicked_ui_element.component.get_graph())
@@ -123,9 +132,9 @@ class DrawableCanvas(tk.Canvas):
 
         c1 = c1.component
         c2 = c2.component
-        if c1.__class__.__name__ == 'OutSocket' and c2.__class__.__name__ == 'InSocket':
-            print("heh")
-            return c1.parent != c2.parent
+        if (c1.__class__.__name__ == 'OutSocketModel' and c2.__class__.__name__ == 'InSocketModel') or\
+                (c2.__class__.__name__ == 'OutSocketModel' and c1.__class__.__name__ == 'InSocketModel'):
+            return True
         return False
 
     def get_selected_graph(self):

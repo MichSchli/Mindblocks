@@ -19,7 +19,7 @@ class ViewComponentInstantiateTest(unittest.TestCase):
         module_component = Mock()
         module_component.instantiate.return_value = component
 
-        view = View("test_view", self.mm, self.idf)
+        view = View("test_view", self.idf)
 
         instantiated = view.instantiate(module_component)
 
@@ -45,7 +45,7 @@ class ViewComponentInstantiateTest(unittest.TestCase):
         module_component = Mock()
         module_component.instantiate.return_value = component
 
-        view = View("test_view", self.mm, self.idf)
+        view = View("test_view", self.idf)
         view.instantiate(module_component)
 
         self.idf.assign_identifier.assert_any_call(component)
@@ -59,7 +59,7 @@ class ViewComponentInstantiateTest(unittest.TestCase):
         graph = Mock()
         component.get_graph.return_value = graph
 
-        view = View("test_view", self.mm, self.idf)
+        view = View("test_view", self.idf)
         view.instantiate(module_component)
 
         self.idf.assign_identifier.assert_any_call(graph)
@@ -72,7 +72,7 @@ class ViewComponentInstantiateTest(unittest.TestCase):
         graph = Mock()
         component.get_graph.return_value = graph
 
-        view = View("test_view", self.mm, self.idf)
+        view = View("test_view", self.idf)
         view.instantiate(module_component)
 
         self.mm.register_graph.assert_called_with("test_view", graph)

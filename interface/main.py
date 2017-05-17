@@ -1,23 +1,25 @@
 import tkinter as tk
 from tkinter import ttk
 
+from NEW.controller.mindblocks_controller import MindblocksController
+from NEW.model.canvas.canvas_repository import CanvasRepository
+from NEW.observer.selection import Selection
 from compilation.compiler import Compiler
 from compilation.graph_compiler import GraphCompiler
-from graph_runners.python_graph_runner import GraphRunner
-from identifiables.identifierFactory import IdentifierFactory
+from graph.graph_runners.python_graph_runner import GraphRunner
+from identifiables.identifier_factory import IdentifierFactory
 from interface.drawable_canvas import DrawableCanvas
 from interface.other.description_panel import DescriptionPanel
 from interface.other.file_interface import FileInterface
 from interface.other.menubar import Menubar
 from interface.other.toolbox import Toolbox
-from interface.selection import Selection
 from module_management.module_importer import ModuleImporter
 from module_management.module_manager import ModuleManager
 from persistence.graph_loader import GraphLoader
 from persistence.graph_saver import GraphSaver
 from persistence.view_loader import ViewLoader
 from persistence.view_saver import ViewSaver
-from views.view import View
+from views.view_manager import ViewManager
 
 
 class Interface(tk.Tk):
@@ -26,32 +28,53 @@ class Interface(tk.Tk):
 
     def __init__(self):
         tk.Tk.__init__(self)
-        
+
+        '''
+        Initialize model:
+        '''
+        self.identifier_factory = IdentifierFactory()
+        self.view_manager = ViewManager(self.identifier_factory, None)
+        self.module_importer = ModuleImporter()
+        self.module_manager = ModuleManager(self.module_importer)
+
+        '''
+        Initialize selectors:
+        '''
+        self.initialize_selectors()
+
+        '''
+        Initialize general UI:
+        '''
         self.title('Mindblocks')
         self.geometry('{}x{}'.format(800, 600))
-
-        self.selected_component = Selection(None)
-        
         self.menubar = Menubar(self)
         self.config(menu=self.menubar)
-        
         self.make_support_frames()
-        self.add_interface()
 
+        '''
+        Initialize model-specific UI:
+        '''
+        self.initialize_toolbox()
+        self.initialize_description_panel()
         self.initialize_canvas_area()
 
-        self.initialize_component_selection()
-        self.initialize_canvas_selection()
-
-        self.add_view()
-
+        '''
+        Initialize persistence:
+        '''
         self.graph_saver = GraphSaver()
         self.view_saver = ViewSaver(self.graph_saver)
-
         self.graph_loader = GraphLoader(self.module_importer)
         self.view_loader = ViewLoader(self.graph_loader, self.module_manager, self.identifier_factory)
-
         self.file_interface = FileInterface()
+
+        '''
+        Initialize controller
+        '''
+        #temp model init
+        self.controller = MindblocksController(self)
+
+        # Create first view:
+        self.controller.create_new_canvas()
 
 
     def make_support_frames(self):
@@ -61,17 +84,26 @@ class Interface(tk.Tk):
         self.right_frame.pack(side=tk.RIGHT, expand=False, fill=tk.Y, pady=0, padx=0, anchor="ne")
         self.left_frame.pack(side=tk.RIGHT, expand=True, fill=tk.BOTH, pady=0, padx=0, anchor="ne")
 
-    def add_interface(self):
-        self.toolbox = Toolbox(self.right_frame)
+    '''
+    Initialize model-specific UI:
+    '''
+
+    def initialize_description_panel(self):
         self.description_panel = DescriptionPanel(self.right_frame)
-
+        self.description_panel.selected_component = self.selected_component
+        self.selected_component.set_observer(self.description_panel.component_selection_changed)
         self.description_panel.pack(side=tk.BOTTOM, expand=False, fill=tk.X, pady=0, padx=0, anchor="s")
-        self.toolbox.pack(side=tk.BOTTOM, expand=True, fill=tk.Y, pady=0, padx=0, anchor="n")
 
-    def initialize_canvas_selection(self):
-        self.selected_canvas = Selection(None)
-        self.selected_canvas.set_watcher(self.toolbox.canvas_selection_changed) 
-        
+    def initialize_toolbox(self):
+        self.toolbox = Toolbox(self.right_frame)
+        self.toolbox.selected_component = self.selected_component
+        self.toolbox.display_modules(self.module_manager.fetch_basic_modules())
+        self.toolbox.pack(side=tk.TOP, expand=True, fill=tk.Y, pady=0, padx=0, anchor="n")
+
+    def initialize_canvas_area(self):
+        self.note = ttk.Notebook(self.left_frame)
+        self.note.pack(side=tk.LEFT, expand=True, fill=tk.BOTH, anchor="nw")
+
         def tabChangedEvent(event):
             new_canvas_idx = event.widget.index("current")
             new_canvas = self.canvases[new_canvas_idx]
@@ -79,15 +111,15 @@ class Interface(tk.Tk):
 
         self.note.bind_all("<<NotebookTabChanged>>", tabChangedEvent)
 
-    def initialize_component_selection(self):
+    def initialize_selectors(self):
+        self.selected_canvas = Selection(None)
         self.selected_component = Selection(None, properties = {'is_toolbox':False})
 
-        self.toolbox.selected_component = self.selected_component
-        self.description_panel.selected_component = self.selected_component
-
-        self.selected_component.set_watcher(self.description_panel.component_selection_changed) 
         
 
+    '''
+    Interface
+    '''
     def predict_selection(self):
         graph = self.selected_canvas.get().get_selected_graph()
         runner = GraphRunner()
@@ -127,47 +159,20 @@ class Interface(tk.Tk):
         self.process_view_in_ui(new_view)
 
 
-    def initialize_canvas_area(self):
-        self.note = ttk.Notebook(self.left_frame)
-
-        self.module_importer = ModuleImporter()
-        self.module_manager = ModuleManager(self.module_importer)
-        self.identifier_factory = IdentifierFactory()
-
-        self.note.pack(side=tk.LEFT, expand=True, fill=tk.BOTH, anchor="nw")
-
-
-        #TODO: Awaiting tests, refactor
-        '''
-        actual_agent_view = View("agent", self.module_manager, self.identifier_factory)
-        actual_experiment_view = View("experiment", self.module_manager, self.identifier_factory)
-        
-        self.agent_canvas = DrawableCanvas(self.note, actual_agent_view)
-        self.experiment_canvas = DrawableCanvas(self.note, actual_experiment_view)
-
-        self.note.add(self.agent_canvas, text="Agents")
-        self.note.add(self.experiment_canvas, text="Experiment")
-        '''
-
-
     def add_view(self, view_name=None):
-        if view_name is None:
-            view_name = self.identifier_factory.get_next_identifier(name_string="view")
+        self.controller.create_new_canvas()
 
-        view = View(view_name, self.module_manager, self.identifier_factory)
-        self.process_view_in_ui(view)
-
-        self.module_manager.register_view(view)
 
     def process_view_in_ui(self, view):
-        canvas = DrawableCanvas(self.note, view)
-        self.note.add(canvas, text=view.name)
+        canvas = DrawableCanvas(self.note, view, self.controller)
+        self.note.add(canvas, text=view.get_unique_identifier())
         self.canvases.append(canvas)
         self.selected_canvas.change(canvas)
         canvas.selected_ui_element = self.selected_component
         self.note.select(len(self.canvases) - 1)
 
-    def layout(self):
-        self.description_panel.pack(side=tk.BOTTOM, expand=False, pady=0, padx=0, anchor="se")
-        self.toolbox.pack(side=tk.RIGHT, expand=True, fill=tk.Y, pady=0, padx=0, anchor="ne")
-        self.note.pack(side=tk.RIGHT, expand=True, fill=tk.BOTH, pady=0, padx=0, anchor="ne")
+    def process_component_in_ui(self, component, location):
+        self.selected_canvas.get().add_ui_component(component, location)
+
+    def process_edge_in_ui(self, edge):
+        self.selected_canvas.get().add_ui_edge(edge)

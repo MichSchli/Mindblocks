@@ -82,7 +82,7 @@ class ToolboxCanvas(tk.Canvas):
 
 class ComponentArea:
 
-    active = True
+    active = False
 
     def __init__(self, canvas, module):
         self.canvas = canvas

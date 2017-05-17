@@ -17,6 +17,7 @@ class Menubar(tk.Menu):
                  ("Add view", self.add_view),
                  ("Save View", self.save_view),
                  ("Load View", self.load_view),
+                 ("Save view as module", self.placeholder),
              ]
              ),
             ("Edit",

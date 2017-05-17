@@ -27,6 +27,13 @@ class Component(Vertex, Identifiable):
         self.attributes = self.default_attributes
         self.module = module
 
+        Identifiable.__init__(self, unique_identifier=identifier)
+
+    def add_in_socket(self, socket):
+        self.in_sockets.append(socket)
+
+    def add_out_socket(self, socket):
+        self.out_sockets.append(socket)
 
     def update_attributes(self, new_attributes):
         for k,v in new_attributes.items():

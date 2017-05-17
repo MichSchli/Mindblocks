@@ -22,6 +22,13 @@ class ModuleComponent:
     def get_unique_identifier(self):
         return self.get_name()
 
+    # TODO: HACK
+    def get_default_in_sockets(self):
+        return self.component_class.default_in_sockets
+
+    def get_default_out_sockets(self):
+        return self.component_class.default_out_sockets
+
     def get_attributes(self):
         return self.component_class.default_attributes
 
@@ -35,4 +42,7 @@ class GraphModuleComponent(ModuleComponent):
         self.graph = graph
 
     def instantiate(self, identifier=None):
-        return SubgraphComponent(self.graph, manifest=self.manifest, identifier=identifier)
+        sgc = SubgraphComponent(manifest=self.manifest, identifier=identifier)
+        graph_attributes = {'target_view': 'abc', 'target_graph': self.graph.get_name()}
+        sgc.update_attributes(graph_attributes)
+        return sgc

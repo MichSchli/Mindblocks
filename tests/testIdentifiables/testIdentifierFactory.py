@@ -1,5 +1,5 @@
 import unittest
-from identifiables.identifierFactory import IdentifierFactory
+from identifiables.identifier_factory import IdentifierFactory
 from identifiables.identifiable import Identifiable
 
 
