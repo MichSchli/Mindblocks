@@ -1,6 +1,4 @@
-from NEW.observer.observable_dictionary import ObservableDict
-from NEW.observer.observable_list import ObservableList
-from identifiables.identifiable import Identifiable
+from NEW.model.identifiables.identifiable import Identifiable
 
 
 class CanvasModel(Identifiable):

@@ -1,6 +1,7 @@
 import unittest
-from identifiables.identifier_factory import IdentifierFactory
-from identifiables.identifiable import Identifiable
+
+from NEW.model.identifiables import Identifiable
+from NEW.model.identifiables import IdentifierFactory
 
 
 class IdentifierFactoryTest(unittest.TestCase):

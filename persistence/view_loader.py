@@ -1,5 +1,5 @@
 from persistence.XmlReader import XmlReader
-from views.view import View
+#from views.view import View
 
 
 class ViewLoader(XmlReader):

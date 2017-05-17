@@ -3,7 +3,7 @@ from NEW.model.component.component_repository import ComponentRepository
 from NEW.model.component.component_specification import ComponentSpecification
 from NEW.model.component.socket.socket_repository import SocketRepository
 from NEW.model.graph.graph_repository import GraphRepository
-from identifiables.identifier_factory import IdentifierFactory
+from NEW.model.identifiables.identifier_factory import IdentifierFactory
 
 
 class MindblocksController:
@@ -36,6 +36,7 @@ class MindblocksController:
         specifications.graph = graph
 
         component = self.component_repository.create_component_with_sockets(specifications)
+        print(component.out_sockets)
 
         self.view.process_component_in_ui(component, location)
         return component

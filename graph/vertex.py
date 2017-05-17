@@ -1,5 +1,6 @@
+from NEW.model.identifiables.identifiable import Identifiable
 from graph.graph import Graph
-from identifiables.identifiable import Identifiable
+
 
 class Vertex(Identifiable):
     graph = None
@@ -32,8 +33,8 @@ class Vertex(Identifiable):
     def get_name(self):
         return self.name
 
-    def push_by_index(self, index, value, type='tensor'):
-        self.edges_out[index].push(value, type)
+    def push_by_index(self, index, value):
+        self.edges_out[index].push(value)
 
     def pull_by_index(self, index):
         return self.edges_in[index].pull()

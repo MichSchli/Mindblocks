@@ -12,3 +12,15 @@ class OutSocketModel(AbstractSocketModel):
 
     def get_socket_type(self):
         return "out"
+
+    def compile_theano(self):
+        value = self.pull_by_index(0)
+
+        for edge in self.get_edges_out():
+            edge.push(value)
+
+    def compile_python(self):
+        value = self.pull_by_index(0)
+
+        for edge in self.get_edges_out():
+            edge.push(value)

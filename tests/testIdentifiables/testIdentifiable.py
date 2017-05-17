@@ -1,6 +1,6 @@
 import unittest
 
-from identifiables.identifiable import Identifiable
+from NEW.model.identifiables import Identifiable
 
 
 class IdentifiableTest(unittest.TestCase):

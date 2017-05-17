@@ -25,6 +25,9 @@ class GraphRepository:
         edge = EdgeModel(origin, destination)
         graph.append_edge(edge)
         edge.set_graph(graph)
+
+        origin.add_outgoing_edge(edge)
+        destination.add_ingoing_edge(edge)
         return edge
 
     def unify_graphs(self, graph_1, graph_2):

@@ -2,12 +2,10 @@ import tkinter as tk
 from tkinter import ttk
 
 from NEW.controller.mindblocks_controller import MindblocksController
-from NEW.model.canvas.canvas_repository import CanvasRepository
 from NEW.observer.selection import Selection
 from compilation.compiler import Compiler
 from compilation.graph_compiler import GraphCompiler
 from graph.graph_runners.python_graph_runner import GraphRunner
-from identifiables.identifier_factory import IdentifierFactory
 from interface.drawable_canvas import DrawableCanvas
 from interface.other.description_panel import DescriptionPanel
 from interface.other.file_interface import FileInterface
@@ -19,7 +17,8 @@ from persistence.graph_loader import GraphLoader
 from persistence.graph_saver import GraphSaver
 from persistence.view_loader import ViewLoader
 from persistence.view_saver import ViewSaver
-from views.view_manager import ViewManager
+
+#from views.view_manager import ViewManager
 
 
 class Interface(tk.Tk):
@@ -32,8 +31,6 @@ class Interface(tk.Tk):
         '''
         Initialize model:
         '''
-        self.identifier_factory = IdentifierFactory()
-        self.view_manager = ViewManager(self.identifier_factory, None)
         self.module_importer = ModuleImporter()
         self.module_manager = ModuleManager(self.module_importer)
 
@@ -61,11 +58,11 @@ class Interface(tk.Tk):
         '''
         Initialize persistence:
         '''
-        self.graph_saver = GraphSaver()
-        self.view_saver = ViewSaver(self.graph_saver)
-        self.graph_loader = GraphLoader(self.module_importer)
-        self.view_loader = ViewLoader(self.graph_loader, self.module_manager, self.identifier_factory)
-        self.file_interface = FileInterface()
+        #self.graph_saver = GraphSaver()
+        #self.view_saver = ViewSaver(self.graph_saver)
+        #self.graph_loader = GraphLoader(self.module_importer)
+        #self.view_loader = ViewLoader(self.graph_loader, self.module_manager, self.identifier_factory)
+        #self.file_interface = FileInterface()
 
         '''
         Initialize controller

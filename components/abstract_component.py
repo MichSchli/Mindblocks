@@ -1,12 +1,9 @@
+from NEW.model.identifiables.identifiable import Identifiable
 from components.abstract_socket import InSocket, OutSocket
-from graph.graph import Graph
-from graph.vertex import Vertex
-from interface.graphics.graphic import *
-import theano.tensor as T
-from identifiables.identifiable import Identifiable
-from components.abstract_ui_representation import *
+from NEW.model.graph.abstract_vertex_model import AbstractVertex
 
-class Component(Vertex, Identifiable):
+
+class Component(AbstractVertex, Identifiable):
 
     default_in_sockets = []
     default_out_sockets = []
@@ -19,7 +16,6 @@ class Component(Vertex, Identifiable):
     out_sockets = []
 
     def __init__(self, manifest=None, identifier=None, module=None):
-        Vertex.__init__(self, name=self.name)
 
         self.name = manifest['name']
         self.manifest = manifest
@@ -27,7 +23,17 @@ class Component(Vertex, Identifiable):
         self.attributes = self.default_attributes
         self.module = module
 
+        self.in_sockets = []
+        self.out_sockets = []
+
+        AbstractVertex.__init__(self)
         Identifiable.__init__(self, unique_identifier=identifier)
+
+    def parse_attributes(self):
+        return True
+
+    def get_attributes(self):
+        return self.attributes
 
     def add_in_socket(self, socket):
         self.in_sockets.append(socket)

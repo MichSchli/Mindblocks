@@ -1,7 +1,5 @@
-import theano
-
+from NEW.model.identifiables.identifiable import Identifiable
 from graph.edge import Edge
-from identifiables.identifiable import Identifiable
 
 
 class Graph(Identifiable):

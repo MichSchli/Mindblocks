@@ -1,6 +1,7 @@
-from NEW.model.graph.abstract_vertex_model import AbstractVertex
-from identifiables.identifiable import Identifiable
 import numpy as np
+
+from NEW.model.graph.abstract_vertex_model import AbstractVertex
+from NEW.model.identifiables.identifiable import Identifiable
 
 
 class AbstractSocketModel(Identifiable, AbstractVertex):
@@ -11,6 +12,7 @@ class AbstractSocketModel(Identifiable, AbstractVertex):
     attributes = None
 
     def __init__(self, unique_identifier):
+        AbstractVertex.__init__(self)
         Identifiable.__init__(self, unique_identifier=unique_identifier)
         self.attributes = {}
 
@@ -29,3 +31,6 @@ class AbstractSocketModel(Identifiable, AbstractVertex):
 
     def get_parent_component(self):
         return self.parent_component
+
+    def parse_attributes(self):
+        return True

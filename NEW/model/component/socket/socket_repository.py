@@ -36,9 +36,9 @@ class SocketRepository:
             self.graph_repository.add_vertex_to_graph(graph, socket)
 
             if socket_type == "in":
-                self.graph_repository.add_edge_to_graph(graph, parent_component, socket)
-            else:
                 self.graph_repository.add_edge_to_graph(graph, socket, parent_component)
+            else:
+                self.graph_repository.add_edge_to_graph(graph, parent_component, socket)
 
         self.defined_sockets.append(socket)
         return socket
