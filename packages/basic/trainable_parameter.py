@@ -1,10 +1,10 @@
 import numpy as np
 import theano
 
-from components.abstract_component import Component
+from NEW.model.component.component_model import ComponentModel
 
 
-class TrainableParameter(Component):
+class TrainableParameter(ComponentModel):
     name = "Parameter"
     default_out_sockets = [{'position': [0, -20],
                   'name': 'Output'}]

@@ -1,7 +1,9 @@
 import unittest
-from graph.vertex import Vertex
-from graph.visitor import Visitor
 from unittest.mock import MagicMock as Mock
+
+from NEW.model.graph.graph_runners.visitor import Visitor
+from graph.vertex import Vertex
+
 
 class GraphVisitorTest(unittest.TestCase):
 

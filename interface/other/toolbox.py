@@ -90,7 +90,7 @@ class ComponentArea:
 
         self.header = SeparatorBar(canvas, module.get_name())
 
-        self.component_slices = [ComponentSlice(self.canvas, component) for component in module.components]
+        self.component_slices = [ComponentSlice(self.canvas, component) for component in module.get_components()]
 
     def draw(self, offset=6):
         self.header.draw(y_offset=offset)

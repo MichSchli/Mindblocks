@@ -1,10 +1,10 @@
 import numpy as np
 
-from NEW.model.graph.abstract_vertex_model import AbstractVertex
+from NEW.model.graph.vertex_model import VertexModel
 from NEW.model.identifiables.identifiable import Identifiable
 
 
-class AbstractSocketModel(Identifiable, AbstractVertex):
+class AbstractSocketModel(Identifiable, VertexModel):
 
     parent_component = None
     link_radius = 6
@@ -12,7 +12,7 @@ class AbstractSocketModel(Identifiable, AbstractVertex):
     attributes = None
 
     def __init__(self, unique_identifier):
-        AbstractVertex.__init__(self)
+        VertexModel.__init__(self)
         Identifiable.__init__(self, unique_identifier=unique_identifier)
         self.attributes = {}
 

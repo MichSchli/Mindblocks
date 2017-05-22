@@ -1,9 +1,10 @@
-from components.abstract_component import Component
-import theano
 import numpy as np
+
+from NEW.model.component.component_model import ComponentModel
 from assorted.GraphInput import GraphInput
 
-class TensorInput(Component):
+
+class TensorInput(ComponentModel):
 
     name = "TensorInput"
     default_out_sockets = [{'position': [0, -20],

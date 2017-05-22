@@ -1,4 +1,4 @@
-from graph.visitor import Visitor
+from NEW.model.graph.graph_runners.visitor import Visitor
 
 
 class GraphRunner(Visitor):

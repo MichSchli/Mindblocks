@@ -2,21 +2,13 @@ import tkinter as tk
 from tkinter import ttk
 
 from NEW.controller.mindblocks_controller import MindblocksController
+from NEW.model.graph.graph_runners.python_graph_runner import GraphRunner
 from NEW.observer.selection import Selection
-from compilation.compiler import Compiler
-from compilation.graph_compiler import GraphCompiler
-from graph.graph_runners.python_graph_runner import GraphRunner
 from interface.drawable_canvas import DrawableCanvas
 from interface.other.description_panel import DescriptionPanel
-from interface.other.file_interface import FileInterface
 from interface.other.menubar import Menubar
 from interface.other.toolbox import Toolbox
-from module_management.module_importer import ModuleImporter
-from module_management.module_manager import ModuleManager
-from persistence.graph_loader import GraphLoader
-from persistence.graph_saver import GraphSaver
-from persistence.view_loader import ViewLoader
-from persistence.view_saver import ViewSaver
+
 
 #from views.view_manager import ViewManager
 
@@ -29,10 +21,9 @@ class Interface(tk.Tk):
         tk.Tk.__init__(self)
 
         '''
-        Initialize model:
+        Initialize controller
         '''
-        self.module_importer = ModuleImporter()
-        self.module_manager = ModuleManager(self.module_importer)
+        self.controller = MindblocksController(self)
 
         '''
         Initialize selectors:
@@ -52,6 +43,8 @@ class Interface(tk.Tk):
         Initialize model-specific UI:
         '''
         self.initialize_toolbox()
+
+        self.controller.update_toolbox()
         self.initialize_description_panel()
         self.initialize_canvas_area()
 
@@ -64,11 +57,6 @@ class Interface(tk.Tk):
         #self.view_loader = ViewLoader(self.graph_loader, self.module_manager, self.identifier_factory)
         #self.file_interface = FileInterface()
 
-        '''
-        Initialize controller
-        '''
-        #temp model init
-        self.controller = MindblocksController(self)
 
         # Create first view:
         self.controller.create_new_canvas()
@@ -91,10 +79,13 @@ class Interface(tk.Tk):
         self.selected_component.set_observer(self.description_panel.component_selection_changed)
         self.description_panel.pack(side=tk.BOTTOM, expand=False, fill=tk.X, pady=0, padx=0, anchor="s")
 
+    def display_modules(self, modules):
+        self.toolbox.display_modules(modules)
+
     def initialize_toolbox(self):
         self.toolbox = Toolbox(self.right_frame)
         self.toolbox.selected_component = self.selected_component
-        self.toolbox.display_modules(self.module_manager.fetch_basic_modules())
+        #self.toolbox.display_modules(self.module_manager.fetch_basic_modules())
         self.toolbox.pack(side=tk.TOP, expand=True, fill=tk.Y, pady=0, padx=0, anchor="n")
 
     def initialize_canvas_area(self):
@@ -123,13 +114,7 @@ class Interface(tk.Tk):
         print(runner.run(graph, {}))
 
     def compile_selection(self):
-        print("Compiling functions...")
-        graph = self.experiment_canvas.get_selected_graph()
-
-        c = Compiler(GraphCompiler())
-        c.compile(graph, "out.py")
-
-        print("done")
+        pass
 
     def save_current_view(self):
         pass

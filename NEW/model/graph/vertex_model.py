@@ -1,4 +1,4 @@
-class AbstractVertex:
+class VertexModel:
 
     graph = None
     edges_in = None

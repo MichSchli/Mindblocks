@@ -1,4 +1,3 @@
-from compilation.compilable import Compilable
 import theano.tensor as T
 
 class GraphInput:

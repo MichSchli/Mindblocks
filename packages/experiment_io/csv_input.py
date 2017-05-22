@@ -1,11 +1,10 @@
-import theano.tensor as T
 import numpy as np
 
+from NEW.model.component.component_model import ComponentModel
 from assorted.GraphInput import GraphInput
-from components.abstract_component import Component
 
 
-class CsvInput(Component):
+class CsvInput(ComponentModel):
     name = "CsvInput"
     default_out_sockets = [{'position': [0, -20],
                   'name': 'Output'}]
@@ -17,7 +16,7 @@ class CsvInput(Component):
     graph_input = None
 
     def __init__(self, manifest=None, identifier=None):
-        Component.__init__(self, manifest=manifest, identifier=identifier)
+        ComponentModel.__init__(self, manifest=manifest, identifier=identifier)
         self.graph_input = GraphInput(self.get_name()+"_input", [3])
 
     def parse_column_string(self, string):

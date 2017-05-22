@@ -1,6 +1,6 @@
-from components.abstract_component import Component
+from NEW.model.component.component_model import ComponentModel
 
-class ConsolePrinter(Component):
+class ConsolePrinter(ComponentModel):
 
     name = "ConsolePrinter"
     default_in_sockets = [{'position': [0, 20],

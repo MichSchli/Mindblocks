@@ -1,9 +1,9 @@
 import theano.tensor as T
 
-from components.abstract_component import Component
+from NEW.model.component.component_model import ComponentModel
 
 
-class Sigmoid(Component):
+class Sigmoid(ComponentModel):
     name = "Sigmoid"
     default_out_sockets = [{'position': [0, -20],
                   'name': 'Output'}]

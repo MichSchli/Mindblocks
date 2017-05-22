@@ -1,9 +1,10 @@
 import numpy as np
 import theano
-from components.abstract_component import Component
+
+from NEW.model.component.component_model import ComponentModel
 
 
-class Constant(Component):
+class Constant(ComponentModel):
     name = "Constant"
     default_out_sockets = [{'position': [0, -20],
                   'name': 'Output'}]

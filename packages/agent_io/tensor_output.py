@@ -1,6 +1,6 @@
-from components.abstract_component import Component
+from NEW.model.component.component_model import ComponentModel
 
-class TensorOutput(Component):
+class TensorOutput(ComponentModel):
 
     name = "TensorOutput"
     default_in_sockets = [{'position': [0, 20],

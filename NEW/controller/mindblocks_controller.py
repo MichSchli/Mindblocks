@@ -4,6 +4,9 @@ from NEW.model.component.component_specification import ComponentSpecification
 from NEW.model.component.socket.socket_repository import SocketRepository
 from NEW.model.graph.graph_repository import GraphRepository
 from NEW.model.identifiables.identifier_factory import IdentifierFactory
+from NEW.model.module.module_repository import ModuleRepository
+from NEW.model.module.module_specification import ModuleSpecification
+from NEW.model.module.toolbox_item.toolbox_item_repository import ToolboxItemRepository
 
 
 class MindblocksController:
@@ -17,8 +20,11 @@ class MindblocksController:
 
         self.graph_repository = GraphRepository(self.identifier_factory)
 
-        socket_repository = SocketRepository(self.identifier_factory, self.graph_repository)
-        self.component_repository = ComponentRepository(self.identifier_factory, socket_repository, self.graph_repository)
+        self.socket_repository = SocketRepository(self.identifier_factory, self.graph_repository)
+        self.component_repository = ComponentRepository(self.identifier_factory, self.socket_repository, self.graph_repository)
+
+        self.prototype_repository = ToolboxItemRepository()
+        self.module_repository = ModuleRepository(self.canvas_repository, self.prototype_repository)
 
         self.view = view
 
@@ -26,6 +32,14 @@ class MindblocksController:
         canvas = self.canvas_repository.create_canvas()
         self.view.process_view_in_ui(canvas)
         return canvas
+
+    def update_toolbox(self):
+        specification = ModuleSpecification()
+        basic_modules = self.module_repository.get_basic_modules(specification)
+        canvas_modules = self.module_repository.get_canvas_modules()
+
+        all_modules = basic_modules + canvas_modules
+        self.view.display_modules(all_modules)
 
     def create_component_with_sockets(self, module_component, canvas_model, location):
         specifications = ComponentSpecification()
@@ -36,7 +50,6 @@ class MindblocksController:
         specifications.graph = graph
 
         component = self.component_repository.create_component_with_sockets(specifications)
-        print(component.out_sockets)
 
         self.view.process_component_in_ui(component, location)
         return component

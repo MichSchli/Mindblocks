@@ -38,7 +38,7 @@ class DescriptionTitle(tk.Frame):
         elif not properties['is_toolbox']:
             title = ui_element.component.get_unique_identifier()
         else:
-            title = ui_element.get_unique_identifier()
+            title = ui_element.get_name()
 
         if len(title) > self.max_length:
             title = title[:self.max_length]+"..."

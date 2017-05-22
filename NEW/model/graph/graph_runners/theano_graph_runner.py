@@ -1,5 +1,6 @@
-from graph.visitor import Visitor
 import theano
+
+from NEW.model.graph.graph_runners.visitor import Visitor
 
 
 class TheanoGraphRunner(Visitor):

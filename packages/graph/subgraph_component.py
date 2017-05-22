@@ -1,10 +1,7 @@
-from graph.graph_runners.theano_graph_runner import TheanoGraphRunner
+from NEW.model.component.component_model import ComponentModel
+from NEW.model.graph.graph_runners.theano_graph_runner import TheanoGraphRunner
 
-from compilation.graph_compiler import GraphCompiler
-from components.abstract_component import Component
-
-
-class SubgraphComponent(Component):
+class SubgraphComponent(ComponentModel):
     name = "Subgraph"
     default_out_sockets = []
     default_in_sockets = []
@@ -55,12 +52,12 @@ class SubgraphComponent(Component):
 
     def __init__(self, manifest=None, identifier=None):
         self.graph_runner = TheanoGraphRunner()
-        Component.__init__(self, manifest=manifest, identifier=identifier)
+        ComponentModel.__init__(self, manifest=manifest, identifier=identifier)
 
 
 
     def update_attributes(self, new_attributes):
-        Component.update_attributes(self, new_attributes)
+        ComponentModel.update_attributes(self, new_attributes)
 
         target_view = self.attributes['target_view']
         target_graph = self.attributes['target_graph']

@@ -1,11 +1,9 @@
 import numpy as np
 
-import theano
-
-from components.abstract_component import Component
+from NEW.model.component.component_model import ComponentModel
 
 
-class SGD(Component):
+class SGD(ComponentModel):
 
     name='SGD'
     default_in_sockets = [{'position': [0, 20],

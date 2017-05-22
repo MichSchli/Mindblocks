@@ -1,9 +1,9 @@
 import theano.tensor as T
 
-from components.abstract_component import Component
+from NEW.model.component.component_model import ComponentModel
 
 
-class Dot(Component):
+class Dot(ComponentModel):
     name = "DotProduct"
     default_out_sockets = [{'position': [0, -20],
                   'name': 'Output'}]

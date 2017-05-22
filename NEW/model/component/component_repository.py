@@ -17,12 +17,13 @@ class ComponentRepository:
         if specifications.identifier is None:
             identifier = self.identifier_factory.get_next_identifier(name_string=specifications.module_component.get_name())
 
-        component = specifications.module_component.instantiate(identifier)
+        component_class = specifications.module_component.prototype_class
+        component = component_class(identifier, specifications.module)
 
         if specifications.graph is not None:
             self.graph_repository.add_vertex_to_graph(specifications.graph, component)
 
-        for in_socket_description in specifications.module_component.get_default_in_sockets():
+        for in_socket_description in component.get_default_in_sockets():
             socket_specification = SocketSpecification()
             socket_specification.graph = specifications.graph
             socket_specification.parent_component = component
@@ -30,7 +31,7 @@ class ComponentRepository:
             socket_specification.description = in_socket_description
             component.add_in_socket(self.socket_repository.create_socket(socket_specification))
 
-        for out_socket_description in specifications.module_component.get_default_out_sockets():
+        for out_socket_description in component.get_default_out_sockets():
             socket_specification = SocketSpecification()
             socket_specification.graph = specifications.graph
             socket_specification.parent_component = component
