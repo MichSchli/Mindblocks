@@ -32,5 +32,6 @@ class ToolboxItemRepository:
                 prototype.name = component_manifest['name']
                 prototype.prototype_class = component_class
                 prototype.attributes = component_class.default_attributes
+                prototype.manifest = component_manifest
                 prototypes.append(prototype)
         return prototypes

@@ -16,6 +16,9 @@ class AbstractSocketModel(Identifiable, VertexModel):
         Identifiable.__init__(self, unique_identifier=unique_identifier)
         self.attributes = {}
 
+    def is_socket(self):
+        return True
+
     def calculate_position_from_parent(self, parent_position):
         vector = np.array(self.description['position'])
         scaled_vector = self.link_radius * vector / np.linalg.norm(vector)

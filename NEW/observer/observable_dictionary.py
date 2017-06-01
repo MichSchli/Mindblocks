@@ -12,6 +12,10 @@ class ObservableDict(Observable):
         self.elements[element.get_unique_identifier()] = element
         self.notify_observers()
 
+    def update(self, element):
+        self.elements[element.get_unique_identifier()] = element
+        self.notify_observers()
+
     def delete(self, element):
         del self.elements[element.get_unique_identifier()]
         self.notify_observers()

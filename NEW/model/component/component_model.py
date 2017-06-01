@@ -26,11 +26,20 @@ class ComponentModel(VertexModel, Identifiable):
         VertexModel.__init__(self)
         Identifiable.__init__(self, unique_identifier=identifier)
 
+    def is_socket(self):
+        return False
+
     def get_default_in_sockets(self):
         return self.default_in_sockets
 
     def get_default_out_sockets(self):
         return self.default_out_sockets
+
+    def get_out_sockets(self):
+        return self.out_sockets
+
+    def get_in_sockets(self):
+        return self.in_sockets
 
     def parse_attributes(self):
         return True

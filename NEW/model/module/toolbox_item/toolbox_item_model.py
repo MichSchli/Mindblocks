@@ -6,6 +6,7 @@ class ToolboxItemModel:
     name = None
     prototype_class = None
     attributes = None
+    manifest = None
 
     # TODO: Placeholder until graphics updated. Model should not reference view.
     def instantiate_graphic(self):

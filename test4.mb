@@ -1,2 +1,5 @@
-<view name=agent>
-</view>
+<view name=canvas_0>
+	<graph name=graph_0>
+		<component name=Dot_0>
+			<class>Dot</class>
+			<package>math</package>

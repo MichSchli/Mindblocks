@@ -6,9 +6,12 @@ from NEW.observer.observable_dictionary import ObservableDict
 class GraphRepository:
 
     defined_graphs = None
+    xml_helper = None
 
-    def __init__(self, identifier_factory):
+    def __init__(self, identifier_factory, component_repository, xml_helper):
         self.identifier_factory = identifier_factory
+        self.xml_helper = xml_helper
+        self.component_repository = component_repository
         self.defined_graphs = ObservableDict()
 
     def create_graph(self):
@@ -18,17 +21,21 @@ class GraphRepository:
         return graph
 
     def add_vertex_to_graph(self, graph, vertex):
-        graph.append_vertex(vertex)
-        vertex.set_graph(graph)
+        graph.add_vertex(vertex)
 
     def add_edge_to_graph(self, graph, origin, destination):
-        edge = EdgeModel(origin, destination)
-        graph.append_edge(edge)
-        edge.set_graph(graph)
+        return graph.add_edge(origin, destination)
 
-        origin.add_outgoing_edge(edge)
-        destination.add_ingoing_edge(edge)
-        return edge
+    def save_graph(self, graph, outfile):
+        name = graph.get_unique_identifier()
+
+        print(self.xml_helper.get_header("graph", {"name": name}, indentation=1), file=outfile)
+        for component in graph.topological_walk(components_only=True):
+            self.component_repository.save_component(component, outfile)
+        print(self.xml_helper.get_footer("graph", indentation=1), file=outfile)
+
+    def update_graph(self, graph):
+        self.defined_graphs.update(graph)
 
     def unify_graphs(self, graph_1, graph_2):
         if graph_1 == graph_2:

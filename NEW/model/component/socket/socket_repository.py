@@ -7,9 +7,8 @@ class SocketRepository:
 
     defined_sockets = None
 
-    def __init__(self, identifier_factory, graph_repository):
+    def __init__(self, identifier_factory):
         self.identifier_factory = identifier_factory
-        self.graph_repository = graph_repository
         self.defined_sockets = ObservableDict()
 
     def create_socket(self, specification):
@@ -31,14 +30,6 @@ class SocketRepository:
 
         socket.parent_component = parent_component
         socket.description = socket_description
-
-        if specification.graph is not None:
-            self.graph_repository.add_vertex_to_graph(graph, socket)
-
-            if socket_type == "in":
-                self.graph_repository.add_edge_to_graph(graph, socket, parent_component)
-            else:
-                self.graph_repository.add_edge_to_graph(graph, parent_component, socket)
 
         self.defined_sockets.append(socket)
         return socket

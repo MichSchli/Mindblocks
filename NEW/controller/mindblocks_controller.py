@@ -1,8 +1,10 @@
+from NEW.helpers.xml.xml_helper import XmlHelper
 from NEW.model.canvas.canvas_repository import CanvasRepository
 from NEW.model.component.component_repository import ComponentRepository
 from NEW.model.component.component_specification import ComponentSpecification
 from NEW.model.component.socket.socket_repository import SocketRepository
 from NEW.model.graph.graph_repository import GraphRepository
+from NEW.model.graph.graph_runners.python_graph_runner import GraphRunner
 from NEW.model.identifiables.identifier_factory import IdentifierFactory
 from NEW.model.module.module_repository import ModuleRepository
 from NEW.model.module.module_specification import ModuleSpecification
@@ -16,17 +18,27 @@ class MindblocksController:
 
     def __init__(self, view):
         self.identifier_factory = IdentifierFactory()
-        self.canvas_repository = CanvasRepository(self.identifier_factory)
+        self.xml_helper = XmlHelper()
 
-        self.graph_repository = GraphRepository(self.identifier_factory)
+        self.socket_repository = SocketRepository(self.identifier_factory)
+        self.component_repository = ComponentRepository(self.identifier_factory, self.socket_repository, self.xml_helper)
 
-        self.socket_repository = SocketRepository(self.identifier_factory, self.graph_repository)
-        self.component_repository = ComponentRepository(self.identifier_factory, self.socket_repository, self.graph_repository)
+        self.graph_repository = GraphRepository(self.identifier_factory, self.component_repository, self.xml_helper)
+        self.canvas_repository = CanvasRepository(self.identifier_factory, self.graph_repository, self.xml_helper)
+
 
         self.prototype_repository = ToolboxItemRepository()
         self.module_repository = ModuleRepository(self.canvas_repository, self.prototype_repository)
 
         self.view = view
+
+    def execute_graph(self, graph):
+        runner = GraphRunner()
+        return runner.run(graph, {})
+
+    def save_single_canvas(self, canvas):
+        output_file = self.view.select_save_file()
+        self.canvas_repository.save_canvas(canvas, output_file)
 
     def create_new_canvas(self):
         canvas = self.canvas_repository.create_canvas()
@@ -46,10 +58,14 @@ class MindblocksController:
         specifications.module_component = module_component
         specifications.canvas_model = canvas_model
 
-        graph = self.graph_repository.create_graph()
-        specifications.graph = graph
-
         component = self.component_repository.create_component_with_sockets(specifications)
+
+        graph_model = self.graph_repository.create_graph()
+        graph_model.add_component_with_sockets(component)
+        self.graph_repository.update_graph(graph_model)
+
+        canvas_model.defined_graphs.append(graph_model)
+        self.canvas_repository.update_canvas(canvas_model)
 
         self.view.process_component_in_ui(component, location)
         return component

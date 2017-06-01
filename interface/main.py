@@ -6,6 +6,7 @@ from NEW.model.graph.graph_runners.python_graph_runner import GraphRunner
 from NEW.observer.selection import Selection
 from interface.drawable_canvas import DrawableCanvas
 from interface.other.description_panel import DescriptionPanel
+from interface.other.file_interface import FileInterface
 from interface.other.menubar import Menubar
 from interface.other.toolbox import Toolbox
 
@@ -55,7 +56,7 @@ class Interface(tk.Tk):
         #self.view_saver = ViewSaver(self.graph_saver)
         #self.graph_loader = GraphLoader(self.module_importer)
         #self.view_loader = ViewLoader(self.graph_loader, self.module_manager, self.identifier_factory)
-        #self.file_interface = FileInterface()
+        self.file_interface = FileInterface()
 
 
         # Create first view:
@@ -103,21 +104,27 @@ class Interface(tk.Tk):
         self.selected_canvas = Selection(None)
         self.selected_component = Selection(None, properties = {'is_toolbox':False})
 
-        
 
     '''
     Interface
     '''
+
+    def select_save_file(self):
+        outfile = self.file_interface.save_as_file()
+        return outfile
+
+
     def predict_selection(self):
         graph = self.selected_canvas.get().get_selected_graph()
-        runner = GraphRunner()
-        print(runner.run(graph, {}))
+        result = self.controller.execute_graph(graph)
+        print(result)
 
     def compile_selection(self):
         pass
 
     def save_current_view(self):
-        pass
+        canvas = self.selected_canvas.get()
+        self.controller.save_single_canvas(canvas.view)
 
     def save_all_views(self):
         outfile = self.file_interface.save_as_file()

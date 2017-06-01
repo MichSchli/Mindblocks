@@ -2,8 +2,9 @@ import unittest
 from unittest.mock import MagicMock as Mock
 from unittest.mock import call
 
-from persistence.view_saver import ViewSaver
 from views.view import View
+
+from NEW.model.canvas.canvas_saver import ViewSaver
 
 
 class ViewSaverTest(unittest.TestCase):
