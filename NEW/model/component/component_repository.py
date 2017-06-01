@@ -48,15 +48,13 @@ class ComponentRepository:
             print(self.xml_helper.get_header("attribute", {"key": attribute}, indentation=3)
                   + component.attributes[attribute] + self.xml_helper.get_footer("attribute"), file=outfile)
 
-        #for edge in vertex.get_edges_in():
-        #    in_socket = edge.get_origin()
-        #    if in_socket.is_socket():
-        #        out_socket_names = [e.origin.get_unique_identifier() for e in in_socket.get_edges_in()]
-        #        if out_socket_names:
-        #            in_socket_name = in_socket.description['name']
-        #            socket_string = self.get_header("socket", {"name": in_socket_name}, indentation=3)
-        #            socket_string += ",".join(out_socket_names)
-        #            socket_string += self.get_footer("socket")
-        #            yield socket_string
+        for in_socket in component.get_in_sockets():
+            out_socket_names = [e.origin.get_unique_identifier() for e in in_socket.get_edges_in()]
+            if out_socket_names:
+                in_socket_name = in_socket.description['name']
+                socket_string = self.xml_helper.get_header("socket", {"name": in_socket_name}, indentation=3)
+                socket_string += ",".join(out_socket_names)
+                socket_string += self.xml_helper.get_footer("socket")
+                print(socket_string, file=outfile)
 
         print(self.xml_helper.get_footer("component", indentation=2), file=outfile)

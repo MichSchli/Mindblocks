@@ -1,10 +1,20 @@
 <view name=canvas_0>
 	<graph name=graph_0>
-		<component name=Dot_0>
-			<class>Dot</class>
-			<package>math</package>
-			<attribute key=x>336</attribute>
-			<attribute key=y>160</attribute>
+	</graph>
+	<graph name=graph_1>
+		<component name=Constant_0>
+			<class>Constant</class>
+			<package>basic</package>
+			<attribute key=y>400</attribute>
+			<attribute key=value>0</attribute>
+			<attribute key=x>350</attribute>
+		</component>
+		<component name=Sigmoid_0>
+			<class>Sigmoid</class>
+			<package>nonlinearities</package>
+			<attribute key=y>294</attribute>
+			<attribute key=x>350</attribute>
+			<socket name=Input>Constant_0Output_0</socket>
 		</component>
 	</graph>
 </view>
