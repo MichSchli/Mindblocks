@@ -23,7 +23,6 @@ class Interface(tk.Tk):
         '''
         Initialize controller
         '''
-        self.controller = MindblocksController(self)
 
         '''
         Initialize selectors:
@@ -44,7 +43,6 @@ class Interface(tk.Tk):
         '''
         self.initialize_toolbox()
 
-        self.controller.update_toolbox()
         self.initialize_description_panel()
         self.initialize_canvas_area()
 
@@ -59,6 +57,8 @@ class Interface(tk.Tk):
 
 
         # Create first view:
+        self.controller = MindblocksController(self)
+        self.controller.update_toolbox()
         self.controller.create_new_canvas()
 
 
@@ -92,15 +92,15 @@ class Interface(tk.Tk):
         self.note = ttk.Notebook(self.left_frame)
         self.note.pack(side=tk.LEFT, expand=True, fill=tk.BOTH, anchor="nw")
 
+    def register_tab_changed_event_handler(self, event_handler):
+        #Workaround to keep gui event in view
         def tabChangedEvent(event):
-            new_canvas_idx = event.widget.index("current")
-            new_canvas = self.canvases[new_canvas_idx]
-            self.selected_canvas.change(new_canvas)
+            text = self.note.tab(self.note.select(), "text")
+            event_handler(text)
 
         self.note.bind_all("<<NotebookTabChanged>>", tabChangedEvent)
 
     def initialize_selectors(self):
-        self.selected_canvas = Selection(None)
         self.selected_component = Selection(None, properties = {'is_toolbox':False})
 
 
@@ -134,13 +134,19 @@ class Interface(tk.Tk):
     def process_view_in_ui(self, view):
         canvas = DrawableCanvas(self.note, view, self.controller)
         self.note.add(canvas, text=view.get_unique_identifier())
-        self.canvases.append(canvas)
-        self.selected_canvas.change(canvas)
-        canvas.selected_ui_element = self.selected_component
-        self.note.select(len(self.canvases) - 1)
 
     def process_component_in_ui(self, component, location):
         self.selected_canvas.get().add_ui_component(component, location)
 
     def process_edge_in_ui(self, edge):
         self.selected_canvas.get().add_ui_edge(edge)
+
+    def show_canvas(self, canvas):
+        for i,tab in enumerate(self.note.tabs()):
+            text = self.note.tab(tab, option="text")
+            if text == canvas.get_unique_identifier():
+                self.note.select(i)
+                break
+
+    def update_following_list(self, list):
+        self.note #. CANT DELETE TABS IN TKINTER

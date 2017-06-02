@@ -1,3 +1,7 @@
+from controller.menubar_controller.menubar_listener import MenubarListener
+from controller.selection_controller.selection_presenter import SelectionPresenter
+from controller.viewscreen_controller.viewscreen_listener import ViewscreenListener
+from controller.viewscreen_controller.viewscreen_presenter import ViewscreenPresenter
 from model.canvas.canvas_repository import CanvasRepository
 from model.component.component_repository import ComponentRepository
 from model.component.component_specification import ComponentSpecification
@@ -30,8 +34,13 @@ class MindblocksController:
         self.graph_repository = GraphRepository(self.identifier_factory, self.component_repository, self.xml_helper)
         self.canvas_repository = CanvasRepository(self.identifier_factory, self.graph_repository, self.xml_helper)
 
-
+        self.selection_presenter = SelectionPresenter()
         self.view = view
+
+        self.viewscreen_listener = ViewscreenListener(self.view, self.canvas_repository, self.selection_presenter)
+        self.viewscreen_presenter = ViewscreenPresenter(self.view, self.canvas_repository, self.selection_presenter)
+
+        self.menubar_listener = MenubarListener(self.view.menubar, self.canvas_repository, self.selection_presenter)
 
     def execute_graph(self, graph):
         runner = GraphRunner()

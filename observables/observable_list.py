@@ -1,4 +1,4 @@
-from NEW.observer.observable import Observable
+from observables.observable import Observable
 
 class ObservableList(Observable):
 

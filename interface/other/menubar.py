@@ -1,5 +1,8 @@
 import tkinter as tk
 
+from observables.observable_message import ObservableMessage
+
+
 class Menubar(tk.Menu):
 
     def get_menus(self):
@@ -45,10 +48,12 @@ class Menubar(tk.Menu):
         ]
 
         
-    
+    message = None
+
     def __init__(self, root):
         tk.Menu.__init__(self, root)
         self.root = root
+        self.message = ObservableMessage()
         
         for menu in self.get_menus():
             self.__add_menu_from_list__(*menu)
@@ -57,7 +62,7 @@ class Menubar(tk.Menu):
         pass
 
     def add_view(self):
-        self.root.add_view()
+        self.message.update("Add view")
 
     def save(self):
         self.root.save_all_views()

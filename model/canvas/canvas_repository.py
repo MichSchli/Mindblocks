@@ -20,6 +20,9 @@ class CanvasRepository:
         self.defined_canvases.append(canvas)
         return canvas
 
+    def get_canvas_by_identifier(self, unique_identifier):
+        return self.defined_canvases.get(unique_identifier)
+
     def update_canvas(self, canvas):
         self.defined_canvases.update(canvas)
 
