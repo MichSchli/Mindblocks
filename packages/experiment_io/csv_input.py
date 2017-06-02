@@ -1,7 +1,7 @@
 import numpy as np
 
-from NEW.model.component.component_model import ComponentModel
 from assorted.GraphInput import GraphInput
+from model.component.component_model import ComponentModel
 
 
 class CsvInput(ComponentModel):

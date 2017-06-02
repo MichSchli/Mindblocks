@@ -1,5 +1,7 @@
-from NEW.model.component.component_model import ComponentModel
-from NEW.model.graph.graph_runners.theano_graph_runner import TheanoGraphRunner
+from model.graph.graph_runners.theano_graph_runner import TheanoGraphRunner
+
+from model.component.component_model import ComponentModel
+
 
 class SubgraphComponent(ComponentModel):
     name = "Subgraph"

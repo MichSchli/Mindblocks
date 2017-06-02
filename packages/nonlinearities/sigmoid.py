@@ -1,6 +1,6 @@
 import theano.tensor as T
 
-from NEW.model.component.component_model import ComponentModel
+from model.component.component_model import ComponentModel
 
 
 class Sigmoid(ComponentModel):

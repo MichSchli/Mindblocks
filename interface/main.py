@@ -1,14 +1,13 @@
 import tkinter as tk
 from tkinter import ttk
 
-from NEW.controller.mindblocks_controller import MindblocksController
-from NEW.model.graph.graph_runners.python_graph_runner import GraphRunner
-from NEW.observer.selection import Selection
+from controller.mindblocks_controller import MindblocksController
 from interface.drawable_canvas import DrawableCanvas
 from interface.other.description_panel import DescriptionPanel
 from interface.other.file_interface import FileInterface
 from interface.other.menubar import Menubar
 from interface.other.toolbox import Toolbox
+from observables.selection import Selection
 
 
 #from views.view_manager import ViewManager
@@ -113,44 +112,24 @@ class Interface(tk.Tk):
         outfile = self.file_interface.save_as_file()
         return outfile
 
-
     def predict_selection(self):
         graph = self.selected_canvas.get().get_selected_graph()
         result = self.controller.execute_graph(graph)
         print(result)
 
-    def compile_selection(self):
-        pass
-
     def save_current_view(self):
         canvas = self.selected_canvas.get()
         self.controller.save_single_canvas(canvas.view)
 
-    def save_all_views(self):
-        outfile = self.file_interface.save_as_file()
-        for line in self.view_saver.process(self.agent_canvas.view):
-            print(line, file=outfile)
-
-    def load(self):
+    def select_load_file(self):
         infile = self.file_interface.load_file()
-        str_rep = infile.read()
-
-        new_view = self.view_loader.load_next_view(str_rep)
-
-        if new_view.name == "agent":
-            self.agent_canvas.replace_view(new_view)
+        return infile
 
     def load_view(self):
-        infile = self.file_interface.load_file()
-        str_rep = infile.read()
+        self.controller.load_all_canvases_from_file()
 
-        new_view, _ = self.view_loader.load_next_view(str_rep)
-        self.process_view_in_ui(new_view)
-
-
-    def add_view(self, view_name=None):
+    def add_view(self):
         self.controller.create_new_canvas()
-
 
     def process_view_in_ui(self, view):
         canvas = DrawableCanvas(self.note, view, self.controller)

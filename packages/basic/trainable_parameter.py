@@ -1,7 +1,7 @@
 import numpy as np
 import theano
 
-from NEW.model.component.component_model import ComponentModel
+from model.component.component_model import ComponentModel
 
 
 class TrainableParameter(ComponentModel):

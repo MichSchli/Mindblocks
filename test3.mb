@@ -1,6 +1,4 @@
-<view name=canvas_0>
-	<graph name=graph_0>
-	</graph>
+<view name=canvas_test>
 	<graph name=graph_1>
 		<component name=Constant_0>
 			<class>Constant</class>
@@ -14,7 +12,7 @@
 			<package>nonlinearities</package>
 			<attribute key=y>294</attribute>
 			<attribute key=x>350</attribute>
-			<socket name=Input>Constant_0Output_0</socket>
+			<socket name=Input>Constant_0:Output</socket>
 		</component>
 	</graph>
 </view>

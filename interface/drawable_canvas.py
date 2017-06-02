@@ -1,8 +1,8 @@
 import tkinter as tk
 
-from NEW.observer.selection import Selection
 from interface.components.abstract_ui_representation import UIRepresentation
 from interface.graphics.graphic import LinkBall
+from observables.selection import Selection
 
 
 class DrawableCanvas(tk.Canvas):
