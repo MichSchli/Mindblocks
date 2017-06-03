@@ -6,17 +6,16 @@ class MenubarListener:
     """
 
     menubar = None
-    selection_presenter = None
+    canvas_repository = None
 
-    def __init__(self, menubar, canvas_repository, selection_presenter):
-        self.selection_presenter = selection_presenter
+    def __init__(self, menubar, canvas_repository):
         self.canvas_repository = canvas_repository
         self.menubar = menubar
 
         self.register_observers()
 
     def register_observers(self):
-        self.menubar.message.set_observer(self.add_view)
+        self.menubar.message.define_observer(self.add_view)
 
     '''
     Events:
@@ -27,4 +26,3 @@ class MenubarListener:
             return
 
         canvas = self.canvas_repository.create_canvas()
-        self.selection_presenter.select_canvas(canvas)

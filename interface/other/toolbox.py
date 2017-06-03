@@ -1,16 +1,20 @@
 import tkinter as tk
 import math
 
-class Toolbox(tk.Frame):
+from observables.observable import Observable
+from observables.observed_event import ObservedEvent
+
+
+class Toolbox(tk.Frame, Observable):
 
     components = []
     canvas = None
-    selected_component = None
     modules = []
 
     def __init__(self, parent):
         tk.Frame.__init__(self, parent, width=200)
         self.set_canvas()
+        Observable.__init__(self, events=['clicked'])
         
     def set_canvas(self):
         self.canvas = ToolboxCanvas(self)
@@ -24,17 +28,18 @@ class Toolbox(tk.Frame):
 
     def set_selection(self, component):
         toolbox_property = component is not None
-        self.selected_component.change(component, properties={'is_toolbox': toolbox_property })
         
     def clicked(self, component):
-        self.set_selection(component)
+        event = ObservedEvent('clicked')
+        event.component = component
+        self.notify_observers(event)
 
     def update_components(self):
-        self.set_selection(None)
         self.canvas.set_modules(self.modules)
 
-    def canvas_selection_changed(self, selection):
-        self.display_modules(selection.get().get_available_modules())
+    def define_click_observer(self, observer):
+        self.define_observer(observer, event='clicked')
+
 
 class ToolboxCanvas(tk.Canvas):
 

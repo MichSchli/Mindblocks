@@ -62,6 +62,8 @@ class ComponentModel(VertexModel, Identifiable):
     def get_position(self):
         return self.position
 
+    def get_module_component(self):
+        return self.module
 
     def update_attributes(self, new_attributes):
         for k,v in new_attributes.items():

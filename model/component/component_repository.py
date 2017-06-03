@@ -26,6 +26,9 @@ class ComponentRepository:
         if specifications.attributes is not None:
             component.update_attributes(specifications.attributes)
 
+        if specifications.location is not None:
+            component.set_position(specifications.location[0], specifications.location[1])
+
         for in_socket_description in component.get_default_in_sockets():
             socket_specification = SocketSpecification()
             socket_specification.parent_component = component

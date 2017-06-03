@@ -11,8 +11,9 @@ class DrawableCanvas(tk.Canvas):
     parent = None
     selected_graph = None
     selected_ui_element = None
+    thingy = None
     
-    def __init__(self, parent, view, controller):
+    def __init__(self, parent, view, controller, thingy):
         self.x = self.y = 0
         tk.Canvas.__init__(self, parent, cursor="cross", borderwidth=4, relief='sunken')
         self.bind("<ButtonPress-1>", self.on_button_press)
@@ -24,6 +25,7 @@ class DrawableCanvas(tk.Canvas):
         self.view = view
         self.replace_view(view)
         self.controller = controller
+        self.thingy = thingy
 
     def replace_view(self, new_view):
         self.view = new_view
@@ -52,11 +54,12 @@ class DrawableCanvas(tk.Canvas):
                     self.ui_elements.append(socket_ui_element)
                     dic_rep[vertex.get_unique_identifier()] = socket_ui_element
 
-                    if vertex.get_edges_in() and vertex.get_edges_in()[0].origin.is_socket():
-                        origin = dic_rep[vertex.get_edges_in()[0].origin.get_unique_identifier()]
-                        link_ui_element = origin.link_to(socket_ui_element)
-                        self.ui_elements.append(link_ui_element)
-                        link_ui_element.draw(self)
+                    for i, edge in enumerate(vertex.get_edges_in()):
+                        if edge.origin.is_socket():
+                            origin = dic_rep[vertex.get_edges_in()[i].origin.get_unique_identifier()]
+                            link_ui_element = origin.link_to(socket_ui_element)
+                            self.ui_elements.append(link_ui_element)
+                            link_ui_element.draw(self)
 
     def add_ui_edge(self, edge):
         origin = edge.origin
@@ -104,6 +107,15 @@ class DrawableCanvas(tk.Canvas):
         x = event.x
         y = event.y
 
+        location = [x,y]
+
+        # Todo: Size and shape is also part of model
+        clicked_ui_element = self.ui_element_at(x, y)
+        if clicked_ui_element is not None:
+            clicked_ui_element = clicked_ui_element.component
+        self.thingy.click(location, clicked_ui_element)
+
+        '''
         clicked_ui_element = self.ui_element_at(x, y)
         
         if clicked_ui_element is None and self.selected_ui_element.properties['is_toolbox']:
@@ -125,6 +137,7 @@ class DrawableCanvas(tk.Canvas):
             else:
                 self.selected_ui_element.change(clicked_ui_element, properties={'is_toolbox':False})
                 self.selected_graph.change(clicked_ui_element.component.get_graph())
+        '''
 
     def should_make_link(self, c1, c2):
         if c1 is None or c2 is None:

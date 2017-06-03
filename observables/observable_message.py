@@ -1,4 +1,6 @@
 from observables.observable import Observable
+from observables.observed_event import ObservedEvent
+
 
 class ObservableMessage(Observable):
 
@@ -6,8 +8,8 @@ class ObservableMessage(Observable):
 
     def __init__(self):
         Observable.__init__(self)
-        self.elements = []
 
     def update(self, message):
-        self.message = message
-        self.notify_observers()
+        event = ObservedEvent()
+        event.message = message
+        self.notify_observers(event)

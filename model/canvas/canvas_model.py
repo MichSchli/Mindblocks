@@ -14,3 +14,9 @@ class CanvasModel(Identifiable):
 
     def append_graph(self, graph):
         self.defined_graphs.append(graph)
+
+    def delete_graph(self, graph):
+        for i,g in enumerate(self.defined_graphs):
+            if g.get_unique_identifier() == graph.get_unique_identifier():
+                del self.defined_graphs[i]
+                break

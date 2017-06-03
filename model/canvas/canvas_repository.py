@@ -20,6 +20,12 @@ class CanvasRepository:
         self.defined_canvases.append(canvas)
         return canvas
 
+    def define_create_observer(self, observer):
+        self.defined_canvases.define_observer(observer, 'append')
+
+    def define_update_observer(self, observer):
+        self.defined_canvases.define_observer(observer, 'update')
+
     def get_canvas_by_identifier(self, unique_identifier):
         return self.defined_canvases.get(unique_identifier)
 

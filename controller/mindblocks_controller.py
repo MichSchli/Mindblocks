@@ -1,5 +1,6 @@
 from controller.menubar_controller.menubar_listener import MenubarListener
 from controller.selection_controller.selection_presenter import SelectionPresenter
+from controller.toolbox_controller.toolbox_listener import ToolboxListener
 from controller.viewscreen_controller.viewscreen_listener import ViewscreenListener
 from controller.viewscreen_controller.viewscreen_presenter import ViewscreenPresenter
 from model.canvas.canvas_repository import CanvasRepository
@@ -34,13 +35,15 @@ class MindblocksController:
         self.graph_repository = GraphRepository(self.identifier_factory, self.component_repository, self.xml_helper)
         self.canvas_repository = CanvasRepository(self.identifier_factory, self.graph_repository, self.xml_helper)
 
-        self.selection_presenter = SelectionPresenter()
+        self.selection_presenter = SelectionPresenter(self.canvas_repository)
         self.view = view
 
-        self.viewscreen_listener = ViewscreenListener(self.view, self.canvas_repository, self.selection_presenter)
+        self.viewscreen_listener = ViewscreenListener(self.view, self.canvas_repository, self.component_repository, self.graph_repository, self.selection_presenter)
         self.viewscreen_presenter = ViewscreenPresenter(self.view, self.canvas_repository, self.selection_presenter)
 
-        self.menubar_listener = MenubarListener(self.view.menubar, self.canvas_repository, self.selection_presenter)
+        self.menubar_listener = MenubarListener(self.view.menubar, self.canvas_repository)
+
+        self.toolbox_listener = ToolboxListener(self.view.toolbox, self.selection_presenter)
 
     def execute_graph(self, graph):
         runner = GraphRunner()
@@ -58,7 +61,6 @@ class MindblocksController:
 
     def create_new_canvas(self):
         canvas = self.canvas_repository.create_canvas()
-        self.view.process_view_in_ui(canvas)
         return canvas
 
     def update_toolbox(self):
@@ -68,30 +70,3 @@ class MindblocksController:
 
         all_modules = basic_modules + canvas_modules
         self.view.display_modules(all_modules)
-
-    def create_component_with_sockets(self, module_component, canvas_model, location):
-        specifications = ComponentSpecification()
-        specifications.module_component = module_component
-
-        component = self.component_repository.create_component_with_sockets(specifications)
-
-        graph_model = self.graph_repository.create_graph()
-        graph_model.add_component_with_sockets(component)
-        self.graph_repository.update_graph(graph_model)
-
-        canvas_model.defined_graphs.append(graph_model)
-        self.canvas_repository.update_canvas(canvas_model)
-
-        self.view.process_component_in_ui(component, location)
-        return component
-
-    def create_edge(self, socket_1, socket_2):
-        if not socket_1.edge_valid(socket_2):
-            return None
-
-        self.graph_repository.unify_graphs(socket_1.get_graph(), socket_2.get_graph())
-
-        edge = self.graph_repository.add_edge_to_graph(socket_1.get_graph(), socket_1, socket_2)
-
-        self.view.process_edge_in_ui(edge)
-        return edge

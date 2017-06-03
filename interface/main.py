@@ -7,18 +7,21 @@ from interface.other.description_panel import DescriptionPanel
 from interface.other.file_interface import FileInterface
 from interface.other.menubar import Menubar
 from interface.other.toolbox import Toolbox
+from observables.observable import Observable
+from observables.observed_event import ObservedEvent
 from observables.selection import Selection
 
 
 #from views.view_manager import ViewManager
 
 
-class Interface(tk.Tk):
+class Interface(tk.Tk, Observable):
 
-    canvases = []
+    drawables = []
 
     def __init__(self):
         tk.Tk.__init__(self)
+        Observable.__init__(self, events=['clicked', 'tab_changed'])
 
         '''
         Initialize controller
@@ -75,8 +78,8 @@ class Interface(tk.Tk):
 
     def initialize_description_panel(self):
         self.description_panel = DescriptionPanel(self.right_frame)
-        self.description_panel.selected_component = self.selected_component
-        self.selected_component.set_observer(self.description_panel.component_selection_changed)
+        #self.description_panel.selected_component = self.selected_component
+        #self.selected_component.define_observer(self.description_panel.component_selection_changed)
         self.description_panel.pack(side=tk.BOTTOM, expand=False, fill=tk.X, pady=0, padx=0, anchor="s")
 
     def display_modules(self, modules):
@@ -84,7 +87,7 @@ class Interface(tk.Tk):
 
     def initialize_toolbox(self):
         self.toolbox = Toolbox(self.right_frame)
-        self.toolbox.selected_component = self.selected_component
+        #self.toolbox.selected_component = self.selected_component
         #self.toolbox.display_modules(self.module_manager.fetch_basic_modules())
         self.toolbox.pack(side=tk.TOP, expand=True, fill=tk.Y, pady=0, padx=0, anchor="n")
 
@@ -92,16 +95,29 @@ class Interface(tk.Tk):
         self.note = ttk.Notebook(self.left_frame)
         self.note.pack(side=tk.LEFT, expand=True, fill=tk.BOTH, anchor="nw")
 
-    def register_tab_changed_event_handler(self, event_handler):
+    def define_tab_changed_observer(self, event_handler):
         #Workaround to keep gui event in view
-        def tabChangedEvent(event):
+        def tabChangedEvent(e):
             text = self.note.tab(self.note.select(), "text")
-            event_handler(text)
+
+            event = ObservedEvent('tab_changed')
+            event.new_canvas_unique_identifier = text
+
+            event_handler(event)
 
         self.note.bind_all("<<NotebookTabChanged>>", tabChangedEvent)
 
+    def click(self, location, element):
+        event = ObservedEvent('clicked')
+        event.location = location
+        event.element = element
+        self.notify_observers(event)
+
+    def define_click_observer(self, observer):
+        self.define_observer(observer, event='clicked')
+
     def initialize_selectors(self):
-        self.selected_component = Selection(None, properties = {'is_toolbox':False})
+        pass #self.selected_component = Selection(None, properties = {'is_toolbox':False})
 
 
     '''
@@ -128,13 +144,6 @@ class Interface(tk.Tk):
     def load_view(self):
         self.controller.load_all_canvases_from_file()
 
-    def add_view(self):
-        self.controller.create_new_canvas()
-
-    def process_view_in_ui(self, view):
-        canvas = DrawableCanvas(self.note, view, self.controller)
-        self.note.add(canvas, text=view.get_unique_identifier())
-
     def process_component_in_ui(self, component, location):
         self.selected_canvas.get().add_ui_component(component, location)
 
@@ -148,5 +157,13 @@ class Interface(tk.Tk):
                 self.note.select(i)
                 break
 
-    def update_following_list(self, list):
-        self.note #. CANT DELETE TABS IN TKINTER
+    def add_canvas(self, canvas):
+        drawable = DrawableCanvas(self.note, canvas, self.controller, self)
+        self.drawables.append(drawable)
+        self.note.add(drawable, text=canvas.get_unique_identifier())
+
+    def redraw_canvas(self, canvas):
+        for i,tab in enumerate(self.note.tabs()):
+            text = self.note.tab(tab, option="text")
+            if text == canvas.get_unique_identifier():
+                self.drawables[i].replace_view(canvas)
