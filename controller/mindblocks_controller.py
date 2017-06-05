@@ -1,3 +1,5 @@
+from controller.description_panel_controller.description_panel_listener import DescriptionPanelListener
+from controller.description_panel_controller.description_panel_presenter import DescriptionPanelPresenter
 from controller.menubar_controller.menubar_listener import MenubarListener
 from controller.selection_controller.selection_presenter import SelectionPresenter
 from controller.toolbox_controller.toolbox_listener import ToolboxListener
@@ -44,6 +46,9 @@ class MindblocksController:
         self.menubar_listener = MenubarListener(self.view.menubar, self.canvas_repository)
 
         self.toolbox_listener = ToolboxListener(self.view.toolbox, self.selection_presenter)
+
+        self.description_panel_presenter = DescriptionPanelPresenter(self.view.description_panel, self.selection_presenter)
+        self.description_panel_listener = DescriptionPanelListener(self.view.description_panel, self.component_repository, self.socket_repository, self.selection_presenter)
 
     def execute_graph(self, graph):
         runner = GraphRunner()

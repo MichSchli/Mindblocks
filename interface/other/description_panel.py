@@ -1,7 +1,11 @@
 import tkinter as tk
 import numpy as np
 
-class DescriptionPanel(tk.Frame):
+from observables.observable import Observable
+from observables.observed_event import ObservedEvent
+
+
+class DescriptionPanel(tk.Frame, Observable):
 
     def __init__(self, parent):
         tk.Frame.__init__(self, parent, height=200, width=200, background='white')
@@ -15,9 +19,24 @@ class DescriptionPanel(tk.Frame):
         self.box.text_field.pack(side=tk.LEFT, expand=True, fill=tk.Y)
         self.box.pack(side=tk.TOP, expand=False, fill=tk.BOTH, pady=0, padx=0, anchor="ne")
 
-    def component_selection_changed(self, selection):
-        self.title.change(selection.get(), selection.properties)
-        self.box.change(selection.get(), selection.properties)
+        Observable.__init__(self, events=["model_changed"])
+
+
+    def update_from_view_model(self, description_view_model):
+        self.description_view_model = description_view_model
+        self.title.change(description_view_model.title)
+        self.box.change(description_view_model)
+
+    def define_change_observer(self, observer):
+        self.define_observer(observer, "model_changed")
+
+    def text_field_changed(self, parse):
+        for k,v in parse.items():
+            self.description_view_model.text_attributes[k] = v
+
+        event = ObservedEvent("model_changed")
+        event.view_model = self.description_view_model
+        self.notify_observers(event)
 
 
 class DescriptionTitle(tk.Frame):
@@ -30,16 +49,8 @@ class DescriptionTitle(tk.Frame):
         self.text = tk.StringVar()
         self.label = tk.Label(self, textvariable=self.text)
         self.label.pack()
-        #self.text.pack(side=tk.TOP, expand=False, fill=tk.X)
 
-    def change(self, ui_element, properties):
-        if ui_element is None:
-            title = "<No selection>"
-        elif not properties['is_toolbox']:
-            title = ui_element.component.get_unique_identifier()
-        else:
-            title = ui_element.get_name()
-
+    def change(self, title):
         if len(title) > self.max_length:
             title = title[:self.max_length]+"..."
             
@@ -47,10 +58,9 @@ class DescriptionTitle(tk.Frame):
         
 class DescriptionBox(tk.Frame):
 
-    component = None
-
     def __init__(self, parent):
         tk.Frame.__init__(self, parent, height=160, width=200)
+        self.parent = parent
 
         self.scrollbar = tk.Scrollbar(self)
         # textfield resizing seems to be broken, so I hardcoded the size
@@ -64,7 +74,7 @@ class DescriptionBox(tk.Frame):
     def wrote_change(self, event):
         parse = self.try_parse()
         if parse is not None:
-            self.component.attributes = parse
+            self.parent.text_field_changed(parse)
 
     def try_parse(self):
         lines = self.text_field.get(1.0, tk.END).strip().split('\n')
@@ -87,15 +97,7 @@ class DescriptionBox(tk.Frame):
     def parse_field(self, string):
         return string
 
-    def change(self, ui_element, properties):
+    def change(self, description_view_model):
         self.text_field.delete(1.0, tk.END)
-        if ui_element is None:
-            self.component = None
-        elif not properties['is_toolbox']:
-            self.component = ui_element.component
-        else:
-            self.component = ui_element
-
-        if self.component is not None:
-            for attribute in self.component.get_attributes():
-                self.text_field.insert(tk.END, attribute+"="+str(self.component.get_attributes()[attribute])+'\n')
+        for k,v in description_view_model.text_attributes.items():
+            self.text_field.insert(tk.END, k + "=" + str(v) + '\n')

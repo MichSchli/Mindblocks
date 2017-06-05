@@ -22,7 +22,7 @@ class ComponentModel(VertexModel, Identifiable):
 
         self.in_sockets = []
         self.out_sockets = []
-        self.attributes = self.default_attributes
+        self.attributes = {}
 
         VertexModel.__init__(self)
         Identifiable.__init__(self, unique_identifier=identifier)

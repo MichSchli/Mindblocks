@@ -23,6 +23,8 @@ class ComponentRepository:
         component_class = specifications.module_component.prototype_class
         component = component_class(identifier, specifications.module_component)
 
+        component.update_attributes(specifications.module_component.get_attributes())
+
         if specifications.attributes is not None:
             component.update_attributes(specifications.attributes)
 
@@ -45,6 +47,9 @@ class ComponentRepository:
 
         self.defined_components.append(component)
         return component
+
+    def update_component(self, component):
+        self.defined_components.update(component)
 
     def save_component(self, component, outfile):
         name = component.get_unique_identifier()

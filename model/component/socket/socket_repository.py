@@ -32,3 +32,6 @@ class SocketRepository:
 
         self.defined_sockets.append(socket)
         return socket
+
+    def update_socket(self, socket):
+        self.defined_sockets.update(socket)
