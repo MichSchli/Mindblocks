@@ -54,10 +54,6 @@ class MindblocksController:
         runner = GraphRunner()
         return runner.run(graph, {})
 
-    def save_single_canvas(self, canvas):
-        output_file = self.view.select_save_file()
-        self.canvas_repository.save_canvas(canvas, output_file)
-
     def load_all_canvases_from_file(self):
         input_file = self.view.select_load_file()
         canvas_list = self.canvas_repository.load_canvases(input_file)

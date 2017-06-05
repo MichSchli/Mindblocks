@@ -12,8 +12,8 @@ class Menubar(tk.Menu, Observable):
             ("File",
              [
                  ("New", self.placeholder),
-                 ("Save", self.placeholder),
-                 ("Load", self.placeholder),
+                 ("Save", self.open_save_dialog_and_cause_event),
+                 ("Load", self.open_load_dialog_and_cause_event),
                  ("Exit", self.placeholder)
              ]
             ),
@@ -21,7 +21,7 @@ class Menubar(tk.Menu, Observable):
              [
                  ("Add view", self.cause_event),
                  ("Save view", self.open_save_dialog_and_cause_event),
-                 ("Load view", self.placeholder),
+                 ("Load view", self.open_load_dialog_and_cause_event),
                  ("Save view as module", self.placeholder),
              ]
              ),
@@ -67,18 +67,34 @@ class Menubar(tk.Menu, Observable):
             self.notify_observers(event)
         return inner_cause
 
-    def define_add_view_observer(self, observer):
-        self.define_observer(observer, "View:Add view")
-
-    def define_save_selected_canvas_observer(self, observer):
-        self.define_observer(observer, "View:Save view")
-
     def open_save_dialog_and_cause_event(self, event_name):
         def inner_cause():
             event = ObservedEvent(event_name)
             event.save_file = self.file_interface.save_as_file()
             self.notify_observers(event)
         return inner_cause
+
+    def open_load_dialog_and_cause_event(self, event_name):
+        def inner_cause():
+            event = ObservedEvent(event_name)
+            event.load_file = self.file_interface.load_file()
+            self.notify_observers(event)
+        return inner_cause
+
+    def define_add_view_observer(self, observer):
+        self.define_observer(observer, "View:Add view")
+
+    def define_save_selected_canvas_observer(self, observer):
+        self.define_observer(observer, "View:Save view")
+
+    def define_load_single_canvas_observer(self, observer):
+        self.define_observer(observer, "View:Load view")
+
+    def define_save_all_observer(self, observer):
+        self.define_observer(observer, "File:Save")
+
+    def define_load_all_observer(self, observer):
+        self.define_observer(observer, "File:Load")
         
     def __add_menu_from_list__(self, root, options):
         menu = tk.Menu(self, tearoff=0)

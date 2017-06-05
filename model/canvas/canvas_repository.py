@@ -32,6 +32,10 @@ class CanvasRepository:
     def update_canvas(self, canvas):
         self.defined_canvases.update(canvas)
 
+    def save_all_canvases(self, outfile):
+        for canvas in self.defined_canvases.as_list():
+            self.save_canvas(canvas[1], outfile)
+
     def save_canvas(self, canvas, outfile):
         name = canvas.get_unique_identifier()
 
