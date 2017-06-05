@@ -35,9 +35,10 @@ class Interface(tk.Tk, Observable):
         '''
         Initialize general UI:
         '''
+        self.file_interface = FileInterface()
         self.title('Mindblocks')
         self.geometry('{}x{}'.format(800, 600))
-        self.menubar = Menubar(self)
+        self.menubar = Menubar(self, self.file_interface)
         self.config(menu=self.menubar)
         self.make_support_frames()
 
@@ -56,7 +57,6 @@ class Interface(tk.Tk, Observable):
         #self.view_saver = ViewSaver(self.graph_saver)
         #self.graph_loader = GraphLoader(self.module_importer)
         #self.view_loader = ViewLoader(self.graph_loader, self.module_manager, self.identifier_factory)
-        self.file_interface = FileInterface()
 
 
         # Create first view:

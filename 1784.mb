@@ -1,20 +1,17 @@
 <view name=canvas_0>
 	<graph name=graph_0>
-		<component name=Constant_0>
-			<class>Constant</class>
-			<package>basic</package>
-			<attribute key=value>1784</attribute>
-			<attribute key=x>331</attribute>
-			<attribute key=y>384</attribute>
-		</component>
 		<component name=ConsolePrinter_0>
 			<class>ConsolePrinter</class>
 			<package>experiment_io</package>
-			<attribute key=x>323</attribute>
-			<attribute key=y>249</attribute>
-			<socket name=Input>Constant_0:Output</socket>
+			<attribute key=y>192</attribute>
+			<attribute key=x>261</attribute>
 		</component>
-	</graph>
-	<graph name=graph_1>
+		<component name=Constant_0>
+			<class>Constant</class>
+			<package>basic</package>
+			<attribute key=y>316</attribute>
+			<attribute key=value>1784</attribute>
+			<attribute key=x>97</attribute>
+		</component>
 	</graph>
 </view>

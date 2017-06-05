@@ -43,7 +43,7 @@ class MindblocksController:
         self.viewscreen_listener = ViewscreenListener(self.view, self.canvas_repository, self.component_repository, self.graph_repository, self.selection_presenter)
         self.viewscreen_presenter = ViewscreenPresenter(self.view, self.canvas_repository, self.selection_presenter)
 
-        self.menubar_listener = MenubarListener(self.view.menubar, self.canvas_repository)
+        self.menubar_listener = MenubarListener(self.view.menubar, self.canvas_repository, self.selection_presenter)
 
         self.toolbox_listener = ToolboxListener(self.view.toolbox, self.selection_presenter)
 

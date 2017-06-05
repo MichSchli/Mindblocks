@@ -1,25 +1,27 @@
 import tkinter as tk
 
+from observables.observable import Observable
 from observables.observable_message import ObservableMessage
+from observables.observed_event import ObservedEvent
 
 
-class Menubar(tk.Menu):
+class Menubar(tk.Menu, Observable):
 
     def get_menus(self):
         return [
             ("File",
              [
                  ("New", self.placeholder),
-                 ("Save", self.save),
-                 ("Load", self.load),
-                 ("Exit", self.quit_f)
+                 ("Save", self.placeholder),
+                 ("Load", self.placeholder),
+                 ("Exit", self.placeholder)
              ]
             ),
             ("View",
              [
-                 ("Add view", self.add_view),
-                 ("Save View", self.save_view),
-                 ("Load View", self.load_view),
+                 ("Add view", self.cause_event),
+                 ("Save view", self.open_save_dialog_and_cause_event),
+                 ("Load view", self.placeholder),
                  ("Save view as module", self.placeholder),
              ]
              ),
@@ -34,64 +36,55 @@ class Menubar(tk.Menu):
             ),
             ("Run",
              [
-                 ("Train", self.train),
-                 ("Predict", self.predict),
-                 ("Options", self.placeholder)
-             ]
-            ),
-            ("Compile",
-             [
-                 ("Run", self.compile),
+                 ("Train", self.placeholder),
+                 ("Predict", self.placeholder),
                  ("Options", self.placeholder)
              ]
             )
         ]
 
-        
-    message = None
-
-    def __init__(self, root):
+    def __init__(self, root, file_interface):
         tk.Menu.__init__(self, root)
         self.root = root
-        self.message = ObservableMessage()
+        self.file_interface = file_interface
         
         for menu in self.get_menus():
             self.__add_menu_from_list__(*menu)
 
-    def placeholder(self):
-        pass
+        events = []
+        for root,options in self.get_menus():
+            for option in options:
+                events.append(root+":"+option[0])
 
-    def add_view(self):
-        self.message.update("Add view")
+        Observable.__init__(self, events=events)
 
-    def save(self):
-        self.root.save_all_views()
+    def placeholder(self, event_name):
+        return lambda: print(event_name)
 
-    def load(self):
-        self.root.load()
+    def cause_event(self, event_name):
+        def inner_cause():
+            event = ObservedEvent(event_name)
+            self.notify_observers(event)
+        return inner_cause
 
-    def load_view(self):
-        self.root.load_view()
+    def define_add_view_observer(self, observer):
+        self.define_observer(observer, "View:Add view")
 
-    def save_view(self):
-        self.root.save_current_view()
+    def define_save_selected_canvas_observer(self, observer):
+        self.define_observer(observer, "View:Save view")
 
-    def quit_f(self):
-        self.root.quit()
-
-    def predict(self):
-        self.root.predict_selection()
-
-    def train(self):
-        self.root.train_selection()
-
-    def compile(self):
-        self.root.compile_selection()
+    def open_save_dialog_and_cause_event(self, event_name):
+        def inner_cause():
+            event = ObservedEvent(event_name)
+            event.save_file = self.file_interface.save_as_file()
+            self.notify_observers(event)
+        return inner_cause
         
-    def __add_menu_from_list__(self, title, l):
+    def __add_menu_from_list__(self, root, options):
         menu = tk.Menu(self, tearoff=0)
-        for k in l:
-            menu.add_command(label=k[0], command=k[1])
 
-        self.add_cascade(label=title, menu=menu)
-            
+        for option in options:
+            event_name = root+":"+option[0]
+            menu.add_command(label=option[0], command=option[1](event_name))
+
+        self.add_cascade(label=root, menu=menu)

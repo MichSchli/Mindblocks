@@ -8,6 +8,7 @@ class Observable:
         else:
             self.observers = {'default':[]}
 
+
     def define_observer(self, observer_method, event='default'):
         self.observers[event].append(observer_method)
 
