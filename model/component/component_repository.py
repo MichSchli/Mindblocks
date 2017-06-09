@@ -1,5 +1,6 @@
 from model.component.component_specification import ComponentSpecification
 from model.component.socket.socket_specification import SocketSpecification
+from model.component.subgraph_component import SubgraphComponentModel
 from observables.observable_dictionary import ObservableDict
 
 
@@ -16,14 +17,17 @@ class ComponentRepository:
 
     def create_component_with_sockets(self, specifications):
         if specifications.identifier is None:
-            identifier = self.identifier_factory.get_next_identifier(name_string=specifications.module_component.get_name())
+            identifier = self.identifier_factory.get_next_identifier(name_string=specifications.module_name)
         else:
             identifier = specifications.identifier
 
-        component_class = specifications.module_component.prototype_class
-        component = component_class(identifier, specifications.module_component)
+        component_class = specifications.prototype_class
+        component = component_class(identifier)
 
-        component.update_attributes(specifications.module_component.get_attributes())
+        component.module_name = specifications.module_name
+        component.module_package = specifications.module_package
+
+        component.update_attributes(specifications.attributes)
 
         if specifications.attributes is not None:
             component.update_attributes(specifications.attributes)
@@ -55,8 +59,8 @@ class ComponentRepository:
         name = component.get_unique_identifier()
         print(self.xml_helper.get_header("component", {"name": name}, indentation=2), file=outfile)
 
-        print(self.xml_helper.get_header("class", indentation=3) + component.module.manifest['name'] + self.xml_helper.get_footer("class"), file=outfile)
-        print(self.xml_helper.get_header("package", indentation=3) + component.module.manifest['package'] + self.xml_helper.get_footer("package"), file=outfile)
+        print(self.xml_helper.get_header("class", indentation=3) + component.module_name + self.xml_helper.get_footer("class"), file=outfile)
+        print(self.xml_helper.get_header("package", indentation=3) + component.module_package + self.xml_helper.get_footer("package"), file=outfile)
 
         for attribute in component.attributes:
             print(self.xml_helper.get_header("attribute", {"key": attribute}, indentation=3)
@@ -97,16 +101,21 @@ class ComponentRepository:
                 target, _, next_index = self.xml_helper.pop_symbol(lines, start_index=next_index, expect_value=True)
                 edges[attributes['name']] = target
 
-        module = self.module_repository.get_basic_module_by_package_name(package_symbol)
-        module_component = module.get_prototype(class_symbol)
+        if not package_symbol == 'subgraph':
+            module = self.module_repository.get_basic_module_by_package_name(package_symbol)
+            module_component = module.get_prototype(class_symbol).prototype_class
+        else:
+            module_component = SubgraphComponentModel
 
         specifications = ComponentSpecification()
-        specifications.module_component = module_component
+        specifications.module_name = class_symbol
+        specifications.module_package = package_symbol
+        specifications.prototype_class = module_component
         specifications.attributes = component_attributes
         specifications.identifier = name
         component = self.create_component_with_sockets(specifications)
 
-        #TODO: This is a code smell
-        component.get_module_component = lambda: module_component
-
         return component, next_index, edges
+
+    def create_subgraph_component(self, graph_model):
+        pass

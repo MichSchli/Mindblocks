@@ -7,6 +7,7 @@ class GraphModel(Identifiable):
 
     vertices = None
     edges = None
+    canvas_identifier = None
 
     def __init__(self, unique_identifier):
         self.vertices = []
@@ -18,6 +19,9 @@ class GraphModel(Identifiable):
 
     def get_edges(self):
         return self.edges
+
+    def get_canvas_identifier(self):
+        return self.canvas_identifier
 
     def get_vertex_by_name(self, identifier):
         for vertex in self.vertices:
@@ -75,3 +79,17 @@ class GraphModel(Identifiable):
         for vertex in self.vertices:
             for out_edge in vertex.get_edges_out():
                 out_edge.mark_satisfied(False)
+
+    def get_inputs(self):
+        inputs = []
+        for component in self.topological_walk(components_only=True):
+            inputs.extend(component.get_theano_inputs())
+
+        return inputs
+
+    def get_outputs(self):
+        outputs = []
+        for component in self.topological_walk(components_only=True):
+            outputs.extend(component.get_theano_outputs())
+
+        return outputs

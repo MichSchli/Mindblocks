@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from interface.components.abstract_ui_representation import UIRepresentation
+from interface.components.abstract_ui_representation import UIRepresentation, PlaceholderGraphic
 from interface.graphics.graphic import LinkBall
 from observables.selection import Selection
 
@@ -41,8 +41,7 @@ class DrawableCanvas(tk.Canvas):
         for graph in self.view.get_defined_graphs():
             for vertex in graph.topological_walk():
                 if not vertex.is_socket():
-                    module_component = vertex.get_module_component()
-                    graphic = module_component.instantiate_graphic()
+                    graphic = PlaceholderGraphic(vertex.get_unique_identifier())
 
                     new_ui_element = UIRepresentation(vertex, graphic)
                     self.ui_elements.append(new_ui_element)

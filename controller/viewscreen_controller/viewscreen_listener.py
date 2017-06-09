@@ -1,4 +1,5 @@
 from model.component.component_specification import ComponentSpecification
+from model.graph.graph_model import GraphModel
 
 
 class ViewscreenListener:
@@ -64,16 +65,22 @@ class ViewscreenListener:
 
     def create_component_at(self, toolbox_item, location):
         specifications = ComponentSpecification()
-        specifications.module_component = toolbox_item
+        specifications.prototype_class = toolbox_item.prototype_class
+        specifications.module_name = toolbox_item.get_name()
+        specifications.module_package = toolbox_item.get_package()
+        specifications.attributes = toolbox_item.attributes
         specifications.location = location
 
         component = self.component_repository.create_component_with_sockets(specifications)
 
-        graph_model = self.graph_repository.create_graph()
-        graph_model.add_component_with_sockets(component)
-        self.graph_repository.update_graph(graph_model)
-
         canvas_model = self.selection_presenter.selected_canvas.get()
+
+        graph_model = GraphModel(None)
+        graph_model.add_component_with_sockets(component)
+        graph_model.canvas_identifier = canvas_model.get_unique_identifier()
+
+        graph_model = self.graph_repository.create(graph_model)
+
         canvas_model.defined_graphs.append(graph_model)
         self.canvas_repository.update_canvas(canvas_model)
 
@@ -82,7 +89,7 @@ class ViewscreenListener:
     def create_edge(self, out_socket, in_socket):
         target_socket_graph = in_socket.get_graph()
         self.graph_repository.unify_graphs(out_socket.get_graph(), in_socket.get_graph())
-        self.graph_repository.add_edge_to_graph(out_socket.get_graph(), in_socket, out_socket)
+        self.graph_repository.add_edge_to_graph(out_socket.get_graph(), out_socket, in_socket)
 
         canvas_model = self.selection_presenter.selected_canvas.get()
         if target_socket_graph != out_socket.get_graph():

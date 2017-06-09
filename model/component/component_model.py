@@ -14,11 +14,13 @@ class ComponentModel(VertexModel, Identifiable):
     chosen_language = None
     position = None
 
+    module_name = None
+    module_package = None
+
     in_sockets = []
     out_sockets = []
 
-    def __init__(self, identifier, module):
-        self.module = module
+    def __init__(self, identifier):
 
         self.in_sockets = []
         self.out_sockets = []
@@ -62,9 +64,6 @@ class ComponentModel(VertexModel, Identifiable):
     def get_position(self):
         return self.position
 
-    def get_module_component(self):
-        return self.module
-
     def update_attributes(self, new_attributes):
         for k,v in new_attributes.items():
             self.attributes[k] = v
@@ -87,43 +86,9 @@ class ComponentModel(VertexModel, Identifiable):
                 return socket
         return None
 
-    '''
-    def get_module_component(self):
-        return self.module
+    def get_theano_inputs(self):
+        return []
 
-
-    def create_sockets(self):
-        self.in_sockets = []
-        for description in self.default_in_sockets:
-            link = InSocket(self, description)
-            link.add_edge(self)
-            self.in_sockets.append(link)
-
-        self.out_sockets = []
-        for description in self.default_out_sockets:
-            link = OutSocket(self, description)
-            self.add_edge(link)
-            self.out_sockets.append(link)
-
-
-    def get_out_socket_by_id(self, id):
-        return self.get_edges_out()[id].destination
-
-    def get_in_socket_by_id(self, id):
-        return self.get_edges_in()[id].origin
-
-    def get_out_socket_by_name(self, name):
-        for edge in self.get_edges_out():
-            if edge.destination.description['name'] == name:
-                return edge.destination
-        return None
-
-    def get_in_socket_by_name(self, name):
-        for edge in self.get_edges_in():
-            if edge.origin.description['name'] == name:
-                return edge.origin
-        return None
-
-    '''
-
+    def get_theano_outputs(self):
+        return []
 

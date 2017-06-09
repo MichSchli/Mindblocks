@@ -33,5 +33,5 @@ class TensorInput(ComponentModel):
 
         return True
 
-    def theano_inputs(self):
-        yield (self.get_unique_identifier() + "_variable", self.variable)
+    def get_theano_inputs(self):
+        return [(self.get_unique_identifier() + "_variable", self.variable)]

@@ -1,6 +1,7 @@
 import tkinter as tk
 import math
 
+from interface.graphics.graphic import PlaceholderGraphic
 from observables.observable import Observable
 from observables.observed_event import ObservedEvent
 
@@ -178,7 +179,7 @@ class ComponentSlice():
         x_center = x + 50
         y_center = y + 50
 
-        self.component.instantiate_graphic().draw(self.canvas, (x_center, y_center), fit_to_size=(x_max_size, y_max_size))
+        PlaceholderGraphic(self.component.get_name()).draw(self.canvas, (x_center, y_center), fit_to_size=(x_max_size, y_max_size))
 
     def click(self, x, y):
         self.canvas.parent.clicked(self.component)

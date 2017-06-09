@@ -20,3 +20,6 @@ class CanvasModel(Identifiable):
             if g.get_unique_identifier() == graph.get_unique_identifier():
                 del self.defined_graphs[i]
                 break
+
+    def get_graphs(self):
+        return self.defined_graphs

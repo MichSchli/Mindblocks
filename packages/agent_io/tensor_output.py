@@ -8,8 +8,8 @@ class TensorOutput(ComponentModel):
 
     default_attributes = {}
 
-    def theano_outputs(self):
+    def get_theano_outputs(self):
         to_be_output = self.pull_by_index(0)
 
-        yield (self.get_unique_identifier() + "_output", to_be_output)
+        return [(self.get_unique_identifier() + "_output", to_be_output)]
 

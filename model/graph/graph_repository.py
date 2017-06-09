@@ -13,17 +13,29 @@ class GraphRepository:
         self.component_repository = component_repository
         self.defined_graphs = ObservableDict()
 
-    def create_graph(self):
+    def define_create_observer(self, observer):
+        self.defined_graphs.define_observer(observer, 'append')
+
+    def define_update_observer(self, observer):
+        self.defined_graphs.define_observer(observer, 'update')
+
+    def define_delete_observer(self, observer):
+        self.defined_graphs.define_observer(observer, 'delete')
+
+    def create(self, graph_model):
         identifier = self.identifier_factory.get_next_identifier(name_string='graph')
-        graph = GraphModel(identifier)
-        self.defined_graphs.append(graph)
-        return graph
+        graph_model.set_unique_identifier(identifier)
+
+        self.defined_graphs.append(graph_model)
+        return graph_model
 
     def add_vertex_to_graph(self, graph, vertex):
         graph.add_vertex(vertex)
 
     def add_edge_to_graph(self, graph, origin, destination):
-        return graph.add_edge(origin, destination)
+        edge = graph.add_edge(origin, destination)
+        self.update_graph(graph)
+        return edge
 
     def save_graph(self, graph, outfile):
         name = graph.get_unique_identifier()

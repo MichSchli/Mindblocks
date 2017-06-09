@@ -1,48 +1,20 @@
 <view name=canvas_1>
-	<graph name=graph_3>
-		<component name=Dot_1>
-			<class>Dot</class>
-			<package>math</package>
-			<attribute key=x>196</attribute>
-			<attribute key=y>172</attribute>
-		</component>
-	</graph>
-</view>
-<view name=canvas_2>
-	<graph name=graph_5>
-		<component name=ConsolePrinter_1>
-			<class>ConsolePrinter</class>
-			<package>experiment_io</package>
-			<attribute key=x>339</attribute>
-			<attribute key=y>297</attribute>
-		</component>
-		<component name=Add_0>
-			<class>Add</class>
-			<package>math</package>
-			<attribute key=x>295</attribute>
-			<attribute key=y>431</attribute>
-		</component>
-	</graph>
-</view>
-<view name=canvas_0>
-	<graph name=graph_1>
-		<component name=ConsolePrinter_0>
-			<class>ConsolePrinter</class>
-			<package>experiment_io</package>
-			<attribute key=x>177</attribute>
-			<attribute key=y>202</attribute>
-		</component>
-		<component name=Sigmoid_0>
-			<class>Sigmoid</class>
-			<package>nonlinearities</package>
-			<attribute key=x>376</attribute>
-			<attribute key=y>208</attribute>
-		</component>
+	<graph name=graph_2>
 		<component name=Dot_0>
 			<class>Dot</class>
 			<package>math</package>
-			<attribute key=x>174</attribute>
-			<attribute key=y>353</attribute>
+			<attribute key=x>224</attribute>
+			<attribute key=y>133</attribute>
+		</component>
+	</graph>
+	<graph name=graph_3>
+		<component name=graph_2_0>
+			<class>graph_2</class>
+			<package>subgraph</package>
+			<attribute key=x>416</attribute>
+			<attribute key=canvas>canvas_1</attribute>
+			<attribute key=y>223</attribute>
+			<attribute key=graph>graph_2</attribute>
 		</component>
 	</graph>
 </view>

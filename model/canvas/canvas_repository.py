@@ -29,6 +29,9 @@ class CanvasRepository:
     def get_canvas_by_identifier(self, unique_identifier):
         return self.defined_canvases.get(unique_identifier)
 
+    def get_all_canvases(self):
+        return [c[1] for c in self.defined_canvases.as_list()]
+
     def update_canvas(self, canvas):
         self.defined_canvases.update(canvas)
 
