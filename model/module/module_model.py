@@ -1,12 +1,15 @@
-class ModuleModel:
+from model.identifiables.identifiable import Identifiable
+
+
+class ModuleModel(Identifiable):
 
     manifest = None
     name = None
     components = []
 
-    def __init__(self, manifest):
-        self.manifest = manifest
-        self.name = manifest['name']
+    def __init__(self, name):
+        Identifiable.__init__(self, unique_identifier="module:"+name)
+        self.name = name
         self.components = []
 
     def get_name(self):

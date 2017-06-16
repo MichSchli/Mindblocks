@@ -1,3 +1,4 @@
+from model.component.component_model import ComponentModel
 from model.component.component_specification import ComponentSpecification
 from model.graph.graph_model import GraphModel
 
@@ -64,14 +65,12 @@ class ViewscreenListener:
     '''
 
     def create_component_at(self, toolbox_item, location):
-        specifications = ComponentSpecification()
-        specifications.prototype_class = toolbox_item.prototype_class
-        specifications.module_name = toolbox_item.get_name()
-        specifications.module_package = toolbox_item.get_package()
-        specifications.attributes = toolbox_item.attributes
-        specifications.location = location
+        component = toolbox_item.prototype_class(None)
+        component.prototype_id = toolbox_item.get_unique_identifier()
+        component.set_position(location[0], location[1])
+        component.update_attributes(toolbox_item.attributes)
 
-        component = self.component_repository.create_component_with_sockets(specifications)
+        component = self.component_repository.create_component_with_sockets(component)
 
         canvas_model = self.selection_presenter.selected_canvas.get()
 

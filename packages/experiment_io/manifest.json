@@ -1,5 +1,5 @@
 {
-   "name": "IO",
+   "name": "Experiment IO",
    "module_name": "components.experiment_io",
    "views": ["experiment"],
    "languages" : ["python"],

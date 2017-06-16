@@ -1,6 +1,8 @@
 from model.component.component_specification import ComponentSpecification
 from model.component.socket.socket_specification import SocketSpecification
 from model.component.subgraph_component import SubgraphComponentModel
+from model.module.prototype_specifications import PrototypeSpecifications
+from model.module.toolbox_item.toolbox_item_specifications import ToolboxItemSpecifications
 from observables.observable_dictionary import ObservableDict
 
 
@@ -15,25 +17,12 @@ class ComponentRepository:
         self.module_repository = module_repository
         self.defined_components = ObservableDict()
 
-    def create_component_with_sockets(self, specifications):
-        if specifications.identifier is None:
-            identifier = self.identifier_factory.get_next_identifier(name_string=specifications.module_name)
-        else:
-            identifier = specifications.identifier
+    def create_component_with_sockets(self, component):
+        prototype = self.module_repository.get_prototype_by_id(component.prototype_id)
 
-        component_class = specifications.prototype_class
-        component = component_class(identifier)
-
-        component.module_name = specifications.module_name
-        component.module_package = specifications.module_package
-
-        component.update_attributes(specifications.attributes)
-
-        if specifications.attributes is not None:
-            component.update_attributes(specifications.attributes)
-
-        if specifications.location is not None:
-            component.set_position(specifications.location[0], specifications.location[1])
+        if component.get_unique_identifier() is None:
+            identifier = self.identifier_factory.get_next_identifier(name_string=prototype.get_name())
+            component.set_unique_identifier(identifier)
 
         for in_socket_description in component.get_default_in_sockets():
             socket_specification = SocketSpecification()
@@ -101,21 +90,19 @@ class ComponentRepository:
                 target, _, next_index = self.xml_helper.pop_symbol(lines, start_index=next_index, expect_value=True)
                 edges[attributes['name']] = target
 
-        if not package_symbol == 'subgraph':
-            module = self.module_repository.get_basic_module_by_package_name(package_symbol)
-            module_component = module.get_prototype(class_symbol).prototype_class
-        else:
-            module_component = SubgraphComponentModel
+        toolbox_item_specification = PrototypeSpecifications()
+        toolbox_item_specification.package = package_symbol
+        toolbox_item_specification.name = class_symbol
 
-        specifications = ComponentSpecification()
-        specifications.module_name = class_symbol
-        specifications.module_package = package_symbol
-        specifications.prototype_class = module_component
-        specifications.attributes = component_attributes
-        specifications.identifier = name
-        component = self.create_component_with_sockets(specifications)
+        toolbox_item = self.module_repository.get_prototype(toolbox_item_specification)
+
+        component = toolbox_item.prototype_class(None)
+        component.prototype_id = toolbox_item.get_unique_identifier()
+        component.update_attributes(toolbox_item.attributes)
+        component.update_attributes(component_attributes)
+
+        component = self.create_component_with_sockets(component)
+
+        # TODO: Load all graphs, then load all components
 
         return component, next_index, edges
-
-    def create_subgraph_component(self, graph_model):
-        pass

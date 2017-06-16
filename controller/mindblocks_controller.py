@@ -1,5 +1,6 @@
 from controller.description_panel_controller.description_panel_listener import DescriptionPanelListener
 from controller.description_panel_controller.description_panel_presenter import DescriptionPanelPresenter
+from controller.mediator.canvas_to_graph_mediator import CanvasToGraphMediator
 from controller.mediator.graph_to_graph_prototype_mediator import GraphToGraphPrototypeMediator
 from controller.menubar_controller.menubar_listener import MenubarListener
 from controller.selection_controller.selection_presenter import SelectionPresenter
@@ -34,6 +35,7 @@ class MindblocksController:
         self.prototype_repository = ToolboxItemRepository()
         self.graph_prototype_repository = GraphPrototypeRepository()
         self.module_repository = ModuleRepository(self.prototype_repository, self.graph_prototype_repository)
+        self.module_repository.load_basic_modules()
 
         self.socket_repository = SocketRepository(self.identifier_factory)
         self.component_repository = ComponentRepository(self.identifier_factory, self.socket_repository, self.module_repository, self.xml_helper)
@@ -57,6 +59,7 @@ class MindblocksController:
         self.toolbox_presenter = ToolboxPresenter(self.view.toolbox, self.module_repository, self.canvas_repository)
 
         self.graph_to_prototype_mediator = GraphToGraphPrototypeMediator(self.graph_repository, self.graph_prototype_repository)
+        self.canvas_to_graph_mediator = CanvasToGraphMediator(self.canvas_repository, self.graph_repository)
 
     def execute_graph(self, graph):
         runner = GraphRunner()

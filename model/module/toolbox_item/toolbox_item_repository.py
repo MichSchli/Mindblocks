@@ -2,17 +2,28 @@ import importlib
 import os
 
 from model.module.toolbox_item.toolbox_item_model import ToolboxItemModel
+from observables.observable_dictionary import ObservableDict
 
 
 class ToolboxItemRepository:
 
     component_dir = '/home/michael/Projects/Mindblocks/packages'
 
+    defined_toolbox_prototypes = None
+
+    def __init__(self):
+        self.defined_toolbox_prototypes = ObservableDict()
+
+    def get(self, specifications):
+        for element in self.defined_toolbox_prototypes.elements.values():
+            if specifications.matches(element):
+                return element
+
     def get_prototypes(self, specifications):
         if specifications.package_manifest is not None:
             return self.get_prototypes_by_package_manifest(specifications.package_manifest)
 
-    def get_prototypes_by_package_manifest(self, package_manifest):
+    def load_prototypes(self, package_manifest):
         component_files = package_manifest['files']
         module_path = package_manifest['module_name']
 
@@ -34,4 +45,7 @@ class ToolboxItemRepository:
                 prototype.prototype_class = component_class
                 prototype.attributes = component_class.default_attributes
                 prototypes.append(prototype)
+
+                self.defined_toolbox_prototypes.append(prototype)
+
         return prototypes

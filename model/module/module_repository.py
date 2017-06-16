@@ -15,83 +15,69 @@ class ModuleRepository:
     modules = None
     component_dir = '/home/michael/Projects/Mindblocks/packages'
 
+    prototype_repository = None
+    graph_prototype_repository = None
+
     def __init__(self, prototype_repository, graph_prototype_repository):
         self.prototype_repository = prototype_repository
         self.graph_prototype_repository = graph_prototype_repository
         self.modules = ObservableDict()
 
-    def get_basic_modules(self, specification):
-        if specification.package_name is None:
-            specification.package_name = self.get_all_package_names()
+    def load_basic_modules(self):
+        for package_name in self.get_all_package_names():
+            module = self.load_basic_module_by_package_name(package_name)
+            self.modules.append(module)
 
-        modules = []
-
-        for package_name in specification.package_name:
-            module = self.get_basic_module_by_package_name(package_name)
-            modules.append(module)
-
-        return modules
-
-
-    def get_basic_module_by_package_name(self, package_name):
+    def load_basic_module_by_package_name(self, package_name):
         manifest = self.load_package_manifest(package_name)
-        module = ModuleModel(manifest)
+        module = ModuleModel(manifest['name'])
 
-        prototype_specifications = ToolboxItemSpecifications()
-        prototype_specifications.package_manifest = manifest
-
-        prototypes = self.prototype_repository.get_prototypes(prototype_specifications)
+        prototypes = self.prototype_repository.load_prototypes(manifest)
         module.extend_prototypes(prototypes)
 
         return module
 
-    def get_canvas_modules(self, canvas_list):
+    def get_prototype_by_id(self, id):
+        for module in self.get_basic_modules(None):
+            for prototype in module.components:
+                print(prototype.get_unique_identifier())
+                print(id)
+                if prototype.get_unique_identifier() == id:
+                    print(prototype)
+                    return prototype
+
+        print("NOT FOUND")
+
+        for module in self.get_canvas_modules(None):
+            for prototype in module.components:
+                if prototype.get_unique_identifier() == id:
+                    return prototype
+
+        return None
+
+    def get_prototype(self, specifications):
+        basic_prototype = self.prototype_repository.get(specifications)
+
+        if basic_prototype is not None:
+            return basic_prototype
+
+        graph_prototype = self.graph_prototype_repository.get(specifications)
+        return graph_prototype
+
+    def get_basic_modules(self, specifications):
+        return list(self.modules.elements.values())
+
+    def get_canvas_modules(self, specifications):
         prototypes = self.graph_prototype_repository.get_all()
-        print(prototypes)
         modules = {}
 
         for prototype in prototypes:
             if prototype.canvas_identifier not in modules:
-                modules[prototype.canvas_identifier] = ModuleModel({'name': prototype.canvas_identifier})
+                modules[prototype.canvas_identifier] = ModuleModel(prototype.canvas_identifier)
 
             modules[prototype.canvas_identifier].components.append(prototype)
 
         return list(modules.values())
-
-        '''
-        cms = []
-
-        for canvas in canvas_list:
-            if not canvas.get_graphs():
-                continue
-
-            module_title = canvas.get_unique_identifier()
-            canvas_module_model = ModuleModel({'name': module_title})
-
-            for graph in canvas.get_graphs():
-                #specifications = ComponentSpecification()
-
-                #specifications.canvas_name = module_title
-                #specifications.graph_name = graph.get_unique_identifier()
-
-                #self.component_repository.create_subgraph_component_with_sockets(specifications)
-
-                graph_item_model = ToolboxItemModel()
-                graph_item_model.name = "Subgraph:"+graph.get_unique_identifier()
-                graph_item_model.package = "subgraph"
-                graph_item_model.prototype_class = SubgraphComponentModel
-                graph_item_model.attributes = {'canvas_name':module_title,
-                                               'graph_name':graph.get_unique_identifier()}
-
-
-                canvas_module_model.extend_prototypes([graph_item_model])
-
-            cms.append(canvas_module_model)
-
-        return cms
-        '''
-
-
 
     '''
     Logic for loading modules:
