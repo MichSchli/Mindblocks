@@ -20,6 +20,7 @@ class GraphPrototypeRepository:
             self.defined_graph_prototypes.delete(graph_prototype)
 
     def get(self, specifications):
+        print(self.defined_graph_prototypes.as_list())
         elements = []
         for prototype in self.defined_graph_prototypes.elements.values():
             if specifications.matches(prototype):

@@ -66,7 +66,7 @@ class CanvasRepository:
 
         symbol, attributes, _ = self.xml_helper.pop_symbol(lines, start_index=next_index)
         while symbol != "/view":
-            graph, next_index = self.graph_repository.load_next_graph(lines, start_index=next_index)
+            graph, next_index = self.graph_repository.load_next_graph(lines, name, start_index=next_index)
             canvas.append_graph(graph)
             symbol, attributes, _ = self.xml_helper.pop_symbol(lines, start_index=next_index)
             print(symbol)

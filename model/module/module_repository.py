@@ -3,6 +3,7 @@ import os
 
 from model.component.component_specification import ComponentSpecification
 from model.component.subgraph_component import SubgraphComponentModel
+from model.module.graph_prototype.graph_prototype_specifications import GraphPrototypeSpecifications
 from model.module.module_model import ModuleModel
 from model.module.toolbox_item.toolbox_item_model import ToolboxItemModel
 from model.module.toolbox_item.toolbox_item_specifications import ToolboxItemSpecifications
@@ -61,7 +62,10 @@ class ModuleRepository:
         if basic_prototype is not None:
             return basic_prototype
 
-        graph_prototype = self.graph_prototype_repository.get(specifications)
+        graph_prototype_specifications = GraphPrototypeSpecifications()
+        graph_prototype_specifications.graph_identifier = specifications.name
+
+        graph_prototype = self.graph_prototype_repository.get(graph_prototype_specifications)
         return graph_prototype
 
     def get_basic_modules(self, specifications):

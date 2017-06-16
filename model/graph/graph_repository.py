@@ -48,11 +48,13 @@ class GraphRepository:
     def update_graph(self, graph):
         self.defined_graphs.update(graph)
 
-    def load_next_graph(self, lines, start_index=0):
+    def load_next_graph(self, lines, canvas_name, start_index=0):
         symbol, attributes, next_index = self.xml_helper.pop_symbol(lines, start_index=start_index)
         name = attributes["name"]
 
         graph = GraphModel(name)
+        graph.canvas_identifier = canvas_name
+        self.create(graph)
 
         symbol, attributes, _ = self.xml_helper.pop_symbol(lines, start_index=next_index)
         while symbol != "/graph":

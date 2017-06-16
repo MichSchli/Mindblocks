@@ -41,9 +41,6 @@ class GraphToGraphPrototypeMediator:
         model.graph_identifier = graph.get_unique_identifier()
         self.graph_prototype_repository.create(model)
 
-        print(graph.get_inputs())
-        print(graph.get_outputs())
-
         #Manage sockets
 
     def update_subgraph_module(self, graph):
