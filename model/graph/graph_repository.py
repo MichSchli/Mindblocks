@@ -23,8 +23,9 @@ class GraphRepository:
         self.defined_graphs.define_observer(observer, 'delete')
 
     def create(self, graph_model):
-        identifier = self.identifier_factory.get_next_identifier(name_string='graph')
-        graph_model.set_unique_identifier(identifier)
+        if graph_model.get_unique_identifier() is None:
+            identifier = self.identifier_factory.get_next_identifier(name_string='graph')
+            graph_model.set_unique_identifier(identifier)
 
         self.defined_graphs.append(graph_model)
         return graph_model

@@ -2,6 +2,7 @@ class GraphPrototypeSpecifications:
 
     identifier = None
     graph_identifier = None
+    canvas_identifier = None
 
     def matches(self, prototype):
         if self.identifier is not None and self.identifier != prototype.get_unique_identifier():

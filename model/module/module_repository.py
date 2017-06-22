@@ -64,8 +64,9 @@ class ModuleRepository:
 
         graph_prototype_specifications = GraphPrototypeSpecifications()
         graph_prototype_specifications.graph_identifier = specifications.name
+        graph_prototype_specifications.canvas_identifier = specifications.canvas
 
-        graph_prototype = self.graph_prototype_repository.get(graph_prototype_specifications)
+        graph_prototype = self.graph_prototype_repository.get(graph_prototype_specifications)[0]
         return graph_prototype
 
     def get_basic_modules(self, specifications):

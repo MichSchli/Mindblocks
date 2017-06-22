@@ -94,11 +94,15 @@ class ComponentRepository:
         toolbox_item_specification.package = package_symbol
         toolbox_item_specification.name = class_symbol
 
+        #TODO: Stupid hack
+        if 'canvas' in component_attributes:
+            toolbox_item_specification.canvas = component_attributes['canvas']
+
         toolbox_item = self.module_repository.get_prototype(toolbox_item_specification)
 
         component = toolbox_item.prototype_class(None)
         component.prototype_id = toolbox_item.get_unique_identifier()
-        component.update_attributes(toolbox_item.attributes)
+        component.update_attributes(toolbox_item.get_attributes())
         component.update_attributes(component_attributes)
 
         component = self.create_component_with_sockets(component)

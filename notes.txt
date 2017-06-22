@@ -1,0 +1,45 @@
+Component structure:
+
+*Component/UIElement duality*
+Manifest provides mapping [ModuleComponent/Component] -> [UIElement]
+
+
+[View]: Holds all components, e.g. agent-view, experiment-view
+
+[Module]
+[ModuleComponent]: Generates Components and UIElements. Lives in Toolbox.
+At creation, generates own (unchangeable) UI element. 
+
+[Component]: Vertex in computational graph. Livs in view.
+	[Sockets]
+	[UIElement]
+
+[Socket]
+	[UIElement
+
+
+
+
+
+
+
+
+
+
+Pro     |     Con
+-----------------
+
+Simple transcription | Complex manipulation in view
+
+
+Discard idea, easy manipulation in view is primary goal
+
+New solution: Graph transformation from an to "UI-graph"? Yes. Two-way transform should be relatively easy to implement as walk. Expand to add concat/sum/etc nodes, contract to remove socket nodes. Or maybe have UI-graph + execution graph and on-the-fly transform? That's not a bad idea, though we will likely want some form of shortened save-graph as well.
+
+Strategy to implement: 
+
+	* Need to explicitly create sockets
+	* Transform UI -> save
+	* Transform save -> UI
+	* Perhaps add executation
+	* Transforms for execution
