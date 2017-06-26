@@ -1,4 +1,5 @@
 from interface.graphics.graphic import PlaceholderGraphic
+from model.computation_unit.computation_unit_model import ComputationUnitModel
 from model.identifiables.identifiable import Identifiable
 
 
@@ -18,8 +19,10 @@ class ToolboxItemModel(Identifiable):
     def get_attributes(self):
         return self.attributes
 
-
     def get_unique_identifier(self):
         return "Toolbox:"+self.package + "," + self.name
+
+    def create_computation_model(self):
+        return ComputationUnitModel()
 
 

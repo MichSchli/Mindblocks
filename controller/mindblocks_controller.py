@@ -12,6 +12,7 @@ from model.canvas.canvas_repository import CanvasRepository
 from model.component.component_repository import ComponentRepository
 from model.component.component_specification import ComponentSpecification
 from model.component.socket.socket_repository import SocketRepository
+from model.computation_unit.computation_unit_repository import ComputationUnitRepository
 from model.graph.graph_repository import GraphRepository
 from model.graph.graph_runners.python_graph_runner import GraphRunner
 from model.identifiables.identifier_factory import IdentifierFactory
@@ -37,6 +38,8 @@ class MindblocksController:
         self.module_repository = ModuleRepository(self.prototype_repository, self.graph_prototype_repository)
         self.module_repository.load_basic_modules()
 
+        self.computation_unit_repository = ComputationUnitRepository(self.identifier_factory)
+
         self.socket_repository = SocketRepository(self.identifier_factory)
         self.component_repository = ComponentRepository(self.identifier_factory, self.socket_repository, self.module_repository, self.xml_helper)
 
@@ -46,7 +49,12 @@ class MindblocksController:
         self.selection_presenter = SelectionPresenter(self.canvas_repository)
         self.view = view
 
-        self.viewscreen_listener = ViewscreenListener(self.view, self.canvas_repository, self.component_repository, self.graph_repository, self.selection_presenter)
+        self.viewscreen_listener = ViewscreenListener(self.view,
+                                                      self.canvas_repository,
+                                                      self.component_repository,
+                                                      self.graph_repository,
+                                                      self.selection_presenter,
+                                                      self.computation_unit_repository)
         self.viewscreen_presenter = ViewscreenPresenter(self.view, self.canvas_repository, self.selection_presenter)
 
         self.menubar_listener = MenubarListener(self.view.menubar, self.canvas_repository, self.selection_presenter)

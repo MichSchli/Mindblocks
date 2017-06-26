@@ -1,5 +1,6 @@
 from model.component.component_model import ComponentModel
 from model.component.component_specification import ComponentSpecification
+from model.computation_unit.computation_unit_model import ComputationUnitModel
 from model.graph.graph_model import GraphModel
 
 
@@ -11,12 +12,13 @@ class ViewscreenListener:
     canvas_repository = None
     selection_presenter = None
 
-    def __init__(self, viewscreen, canvas_repository, component_repository, graph_repository, selection_presenter):
+    def __init__(self, viewscreen, canvas_repository, component_repository, graph_repository, selection_presenter, computation_unit_repository):
         self.canvas_repository = canvas_repository
         self.selection_presenter = selection_presenter
         self.component_repository = component_repository
         self.graph_repository = graph_repository
         self.viewscreen = viewscreen
+        self.computation_unit_repository = computation_unit_repository
 
         self.register_observers()
 
@@ -65,7 +67,11 @@ class ViewscreenListener:
     '''
 
     def create_component_at(self, toolbox_item, location):
-        component = toolbox_item.prototype_class(None)
+        computation_unit_model = toolbox_item.create_computation_model()
+        self.computation_unit_repository.create(computation_unit_model)
+
+        component = ComponentModel()
+        component.computation_unit = computation_unit_model
         component.prototype_id = toolbox_item.get_unique_identifier()
         component.set_position(location[0], location[1])
         component.update_attributes(toolbox_item.attributes)

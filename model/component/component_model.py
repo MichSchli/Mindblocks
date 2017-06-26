@@ -20,14 +20,13 @@ class ComponentModel(VertexModel, Identifiable):
     in_sockets = []
     out_sockets = []
 
-    def __init__(self, identifier):
+    def __init__(self):
 
         self.in_sockets = []
         self.out_sockets = []
         self.attributes = {}
 
         VertexModel.__init__(self)
-        Identifiable.__init__(self, unique_identifier=identifier)
 
     def is_socket(self):
         return False

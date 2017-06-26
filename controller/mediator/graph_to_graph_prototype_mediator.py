@@ -39,12 +39,15 @@ class GraphToGraphPrototypeMediator:
         model = GraphPrototypeModel()
         model.canvas_identifier = canvas_id
         model.graph_identifier = graph.get_unique_identifier()
+
+        model.inputs = [x[0] for x in graph.get_inputs()]
+        model.outputs = [x[0] for x in graph.get_outputs()]
+
         self.graph_prototype_repository.create(model)
 
-        #Manage sockets
-
     def update_subgraph_module(self, graph):
-        pass
+        print(graph.get_inputs())
+        print(graph.get_outputs())
 
     def delete_subgraph_module(self, graph):
         specifications = GraphPrototypeSpecifications()

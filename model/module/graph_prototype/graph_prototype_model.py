@@ -5,6 +5,8 @@ class GraphPrototypeModel(Identifiable):
 
     graph_identifier = None
     canvas_identifier = None
+    inputs = None
+    outputs = None
     prototype_class = SubgraphComponentModel
 
     def get_unique_identifier(self):

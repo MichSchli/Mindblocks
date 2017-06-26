@@ -20,9 +20,8 @@ class ComponentRepository:
     def create_component_with_sockets(self, component):
         prototype = self.module_repository.get_prototype_by_id(component.prototype_id)
 
-        if component.get_unique_identifier() is None:
-            identifier = self.identifier_factory.get_next_identifier(name_string=prototype.get_name())
-            component.set_unique_identifier(identifier)
+        identifier = self.identifier_factory.get_next_identifier(name_string=prototype.get_name())
+        component.set_unique_identifier(identifier)
 
         for in_socket_description in component.get_default_in_sockets():
             socket_specification = SocketSpecification()
